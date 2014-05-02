@@ -145,3 +145,14 @@ end
 def wrap_quotes(s)
   "'" + s + "'"
 end
+
+
+task :init do
+  do_install()
+end
+
+
+def init()
+  system("git submodule init")
+  system("git submodule update")
+end
