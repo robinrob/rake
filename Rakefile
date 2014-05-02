@@ -1,5 +1,6 @@
-RUBY = '2.0.0'
+RUBY = "2.0.0"
 
+DEFAULT_BRANCH = "master"
 
 task :install do
    do_install()
