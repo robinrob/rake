@@ -159,8 +159,7 @@ end
 
 
 task :update do
-  do_install()
-  git("push heroku master")
+  do_update()
 end
 
 
