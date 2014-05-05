@@ -70,12 +70,12 @@ def commit()
   clean()
   add()
   status()
-  system("git commit -m 'Auto-update'")
+  git("commit -m 'Auto-update'")
 end
 
 
 def add()
-  system("git add -A")
+  git("add -A")
 end
 
 
@@ -85,7 +85,7 @@ end
 
 
 def push(branch)
-  system("git push origin " + branch)
+  git("push origin " + branch)
 end
 
 
@@ -95,7 +95,7 @@ end
 
 
 def pull(branch)
-  system("git pull origin " + branch)
+  git("pull origin " + branch)
 end
 
 
@@ -105,7 +105,7 @@ end
 
 
 def status
-  system("git status")
+  git("status")
 end
 
 
@@ -118,7 +118,7 @@ end
 
 task :deploy do
   do_install()
-  system("git push heroku master")
+  git("push heroku master")
 end
 
 
@@ -155,4 +155,20 @@ end
 def init()
   system("git submodule init")
   system("git submodule update")
+end
+
+
+task :update do
+  do_install()
+  git("push heroku master")
+end
+
+
+def do_update()
+  git("submodule update")
+end
+
+
+def git(command)
+  system("git " + command)
 end
