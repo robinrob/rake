@@ -3,11 +3,11 @@ RUBY = "2.0.0"
 DEFAULT_BRANCH = "master"
 
 task :install do
-   do_install()
+   install()
 end
 
 
-def do_install()
+def nstall()
   install_ruby()
   install_gems()
 end
@@ -35,11 +35,6 @@ end
 
 
 task :clean do
-  clean()
-end
-
-
-def clean()
   clean()
 end
 
@@ -159,12 +154,12 @@ end
 
 
 task :update do
-  do_update()
+  update()
 end
 
 
-def do_update()
-  git("submodule update")
+def update()
+  git("submodule foreach git pull origin master")
 end
 
 
