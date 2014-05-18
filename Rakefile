@@ -2,14 +2,36 @@ RUBY = "2.0.0"
 
 DEFAULT_BRANCH = "master"
 
+
+task :init do
+  install()
+  git("submodule init")
+  update()
+end
+
+
+task :update do
+  update()
+end
+
+
+def update()
+  git("submodule foreach git pull origin master")
+end
+
+
 task :install do
    install()
 end
 
 
-def nstall()
-  install_ruby()
+def install()
   install_gems()
+end
+
+
+def install_gems()
+  system("bundle install")
 end
 
 
@@ -29,9 +51,7 @@ def rvm(command)
 end
 
 
-def install_gems()
-  system("bundle install")
-end
+
 
 
 task :clean do
@@ -112,7 +132,7 @@ end
 
 
 task :deploy do
-  do_install()
+  install()
   git("push heroku master")
 end
 
@@ -139,27 +159,6 @@ end
 
 def wrap_quotes(s)
   "'" + s + "'"
-end
-
-
-task :init do
-  do_install()
-end
-
-
-def init()
-  system("git submodule init")
-  update()
-end
-
-
-task :update do
-  update()
-end
-
-
-def update()
-  git("submodule foreach git pull origin master")
 end
 
 
