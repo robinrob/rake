@@ -154,7 +154,7 @@ end
 
 def init()
   system("git submodule init")
-  system("git submodule update")
+  update()
 end
 
 
