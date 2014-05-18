@@ -4,7 +4,7 @@ DEFAULT_BRANCH = "master"
 
 
 task :init do
-  install()
+  do_install()
   git("submodule init")
   update()
 end
@@ -21,11 +21,11 @@ end
 
 
 task :install do
-   install()
+   do_install()
 end
 
 
-def install()
+def do_install()
   install_gems()
 end
 
@@ -132,7 +132,7 @@ end
 
 
 task :deploy do
-  install()
+  do_install()
   git("push heroku master")
 end
 
