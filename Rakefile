@@ -136,6 +136,9 @@ task :deploy do
   git("push heroku master")
 end
 
+task :origin do
+  git("remote show origin")
+end
 
 task :log do
   # Git formats
