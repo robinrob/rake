@@ -40,3 +40,7 @@
 [submodule "aws-backup-system/robins-rakefile"]
 	path = aws-backup-system/robins-rakefile
 	url = git@bitbucket.org:robinrob/rakefile.git
+[submodule "projects/aws_backup_manager"]
+	path = projects/aws_backup_manager
+	url = git@bitbucket.org:robinrob/aws-backup-manager.git
+	branch = master

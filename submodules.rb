@@ -2,7 +2,7 @@
 
 require 'csv'
 
-CSV.foreach("repos.rcsv", :headers => true) do |csv_obj|
+CSV.foreach("repos.csv", :headers => true) do |csv_obj|
   
   repo = csv_obj['Repo']
   url = csv_obj['URL']
