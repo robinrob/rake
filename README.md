@@ -22,3 +22,11 @@ Update repos.csv.
 Then run: install.rb
 
 This will init and update (cloning all commit references for each submodule).
+
+# Usage of Rakefile
+
+Examples based on Rakefile functions in this Rakefile:
+
+rake clean
+rake save
+rake commit
