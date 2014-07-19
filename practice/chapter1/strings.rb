@@ -5,6 +5,7 @@ word2 = "word up! \ni said word up!"
 
 puts 'single-quoted string:'
 puts word1
-puts "\n"
+puts
+
 puts "double-quoted string:"
 puts word2
