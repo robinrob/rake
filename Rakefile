@@ -189,10 +189,10 @@ end
 task  :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
   
-  if !submodule.nil?
-    deinit(submodule)
-  elsif args.size() == 0
+  if submodule == "all"
     deinit_all()
+  else
+    deinit(submodule)
   end
   
 end
