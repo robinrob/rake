@@ -1,10 +1,13 @@
+require 'csv'
+require 'colorize'
+
 RUBY = "2.0.0"
 
 DEFAULT_BRANCH = "master"
 
 
 task :init do
-  do_install()
+  install()
   git("submodule init")
   update()
 end
@@ -21,11 +24,11 @@ end
 
 
 task :install do
-   do_install()
+   install()
 end
 
 
-def do_install()
+def install()
   install_gems()
 end
 
@@ -42,16 +45,13 @@ end
 
 
 def use_ruby(version)
-  rvm("use " + RUBY)
+  rvm("use " + version)
 end
 
 
 def rvm(command)
   system("rvm " + command)
 end
-
-
-
 
 
 task :clean do
@@ -132,13 +132,15 @@ end
 
 
 task :deploy do
-  do_install()
+  install()
   git("push heroku master")
 end
+
 
 task :origin do
   git("remote show origin")
 end
+
 
 task :log do
   # Git formats
@@ -167,4 +169,57 @@ end
 
 def git(command)
   system("git " + command)
+end
+
+
+task :sub_add do
+  
+  CSV.foreach("submodules.csv", :headers => true) do |csv_obj|
+  
+    repo = csv_obj['Repo']
+    url = csv_obj['URL']
+    branch = csv_obj['Branch']
+  
+    system("git submodule add -b #{branch} -f #{url} #{repo}")
+  end
+  
+end
+
+
+task :sub_deinit do
+  
+  if ARGV.size() == 1
+    repo = ARGV[0]
+    deinit(repo)
+  elsif ARGV.size() == 0
+    deinit_all()
+  end
+  
+end
+
+
+def deinit_all()
+
+  CSV.foreach("submodules.csv", :headers => true) do |csv_obj|
+
+    deinit(csv_obj['Repo'])
+  
+  end
+
+  # `rm -rf .git/modules/`
+
+end
+
+
+def deinit(repo)
+  puts "Deinit repo: ".red + "#{repo}".green
+  `rm -rf #{repo}`
+  `git rm -rf --ignore-unmatch --cached #{repo}`
+  `git submodule deinit #{repo} 2> /dev/null`
+  # `rm -rf .git/modules/#{repo}`
+end
+
+
+task :sub_update do
+  `git submodule update --init --recursive`
 end
