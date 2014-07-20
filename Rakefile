@@ -186,12 +186,13 @@ task :sub_add do
 end
 
 
-task :sub_deinit do
+task  :sub_deinit, [:arg1] do |t, args|
+  submobule = args[:arg1]
   
-  if ARGV.size() == 1
-    repo = ARGV[0]
-    deinit(repo)
-  elsif ARGV.size() == 0
+  if args.size() == 1
+    submodule = args[0]
+    deinit(submodule)
+  elsif args.size() == 0
     deinit_all()
   end
   
@@ -211,11 +212,11 @@ def deinit_all()
 end
 
 
-def deinit(repo)
-  puts "Deinit repo: ".red + "#{repo}".green
-  `rm -rf #{repo}`
-  `git rm -rf --ignore-unmatch --cached #{repo}`
-  `git submodule deinit #{repo} 2> /dev/null`
+def deinit(submodule)
+  puts "Deinit repo: ".red + "#{submodule}".green
+  `rm -rf #{submodule}`
+  `git rm -rf --ignore-unmatch --cached #{submodule}`
+  `git submodule deinit #{submodule} 2> /dev/null`
   # `rm -rf .git/modules/#{repo}`
 end
 
