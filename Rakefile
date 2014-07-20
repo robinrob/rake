@@ -187,10 +187,9 @@ end
 
 
 task  :sub_deinit, [:arg1] do |t, args|
-  submobule = args[:arg1]
+  submodule = args[:arg1]
   
-  if args.size() == 1
-    submodule = args[0]
+  if !submodule.nil?
     deinit(submodule)
   elsif args.size() == 0
     deinit_all()
