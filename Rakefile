@@ -226,13 +226,17 @@ end
 
 
 task :sub_gcm, [:submodule, :recursive] do |t, args|
-  submodule = args[:submodule]
+  unless args[:submodule].nil?
+    submodule = args[:submodule]
+  else
+    submodule = "./"
+  end
   
   unless args[:recursive].nil?
-    recursive = (args[:recursive] == "true" ? true : false)
+    recursive = (args[:recursive] == "false" ? false : true)
     puts "Recursive mode!".blue
   else
-    recursive = false
+    recursive = true
   end
   
   gcm(submodule, recursive)
@@ -240,7 +244,7 @@ task :sub_gcm, [:submodule, :recursive] do |t, args|
 end
 
 
-def gcm(repo, recursive=false)
+def gcm(repo="./", recursive=true)
   puts "Checkout master branch for repo: #{repo}".green
   parent_dir = Dir.pwd
   Dir.chdir("#{repo}")
