@@ -70,9 +70,9 @@ task :test do
 end
 
 
-task :count do
+task :count, [:file_type] do |t, args|
   clean()
-  system("find . -name '*.rb' | xargs wc -l")
+  system("find . -name '*.#{args[:file_type]}' | xargs wc -l")
 end
 
 
@@ -174,11 +174,11 @@ end
 
 task :sub_add do
   
-  CSV.foreach("submodules.csv", :headers => true) do |csv_obj|
+  CSV.foreach("submodules.csv", :headers => true) do |row|
   
-    repo = csv_obj['Repo']
-    url = csv_obj['URL']
-    branch = csv_obj['Branch']
+    repo = row['Repo']
+    url = row['URL']
+    branch = row['Branch']
   
     system("git submodule add -b #{branch} -f #{url} #{repo}")
   end
@@ -200,9 +200,9 @@ end
 
 def deinit_all()
 
-  CSV.foreach("submodules.csv", :headers => true) do |csv_obj|
+  CSV.foreach("submodules.csv", :headers => true) do |row|
 
-    deinit(csv_obj['Repo'])
+    deinit(row['Repo'])
   
   end
 
@@ -222,4 +222,29 @@ end
 
 task :sub_update do
   `git submodule update --init --recursive`
+end
+
+
+task :sub_gcm, [:arg1] do |t, args|
+  submodule = args[:arg1]
+  
+  if submodule == "all"
+    gcm_all()
+  else
+    gcm(submodule)
+  end
+  
+end
+
+
+def gcm_all()
+  CSV.foreach("submodules.csv", :headers => true) do |row|
+    gcm(row["Repo"])
+  end
+end
+
+
+def gcm(repo)
+  puts "Checkout master branch for repo: #{repo}".green
+  `cd #{repo} && git checkout master && cd -`
 end
