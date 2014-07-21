@@ -1,1 +1,0 @@
-puts (1..5).to_a.shuffle
