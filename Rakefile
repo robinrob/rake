@@ -186,6 +186,10 @@ task :sub_add do
 end
 
 
+# This task de-initialises the specified submodule, given by its relative path.
+#
+# Example: rake sub_deinit[projects/ruby]
+# Example: rake sub_deinit[all]
 task  :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
   
@@ -225,22 +229,21 @@ task :sub_update do
 end
 
 
+# This task recursively performs "git checkout master" for all submodules.
+# Recursion depends upon presence of file "submodules.csv" in each repo with submodules.
+# Recursion can be turned off by providing a value for second argument.
+#
+# Example: rake sub_gcm[projects/ruby]
+# Example: rake sub_gcm[projects/ruby, false]
+# Example: rake sub_gcm[./]
+# Example: rake sub_gcm
 task :sub_gcm, [:submodule, :recursive] do |t, args|
-  unless args[:submodule].nil?
-    submodule = args[:submodule]
-  else
-    submodule = "./"
-  end
+  submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  recursive = args[:recursive].nil? ? true : false
   
-  unless args[:recursive].nil?
-    recursive = (args[:recursive] == "false" ? false : true)
-    puts "Recursive mode!".blue
-  else
-    recursive = true
-  end
+  puts "Recursive mode!".blue if recursive
   
   gcm(submodule, recursive)
-  
 end
 
 
