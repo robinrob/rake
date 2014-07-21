@@ -225,26 +225,38 @@ task :sub_update do
 end
 
 
-task :sub_gcm, [:arg1] do |t, args|
-  submodule = args[:arg1]
+task :sub_gcm, [:submodule, :recursive] do |t, args|
+  submodule = args[:submodule]
+  unless args[:recursive].nil?
+    recursive = args[:recursive]
+    puts "Recursive mode!".red
+  end
   
   if submodule == "all"
-    gcm_all()
+    gcm_all(recursive)
   else
-    gcm(submodule)
+    gcm(submodule, recursive)
   end
   
 end
 
 
-def gcm_all()
+def gcm_all(recursive)
   CSV.foreach("submodules.csv", :headers => true) do |row|
-    gcm(row["Repo"])
+    gcm(row["Repo"], recursive)
   end
 end
 
 
-def gcm(repo)
+def gcm(repo, recursive=false)
   puts "Checkout master branch for repo: #{repo}".green
-  `cd #{repo} && git checkout master && cd -`
+  command = "cd #{repo} && git checkout master"
+  puts command.red
+  
+  if recursive && File.exists?("submodules.csv")
+    puts "Recursing ...".green
+    system("cd #{repo}")
+    gcm_all(recursive)
+    system("cd -")
+  end
 end
