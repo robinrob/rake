@@ -320,6 +320,6 @@ def each_sub(command, repo="./", recursive=true)
   end
   
   puts "Entering repo: #{repo}".green
-  system("zsh -c 'source ~/.zshrc && rks'")
+  system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
 end
