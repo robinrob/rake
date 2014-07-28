@@ -270,10 +270,8 @@ end
 
 
 def gcm(repo="./", recursive=true)
-  puts "Checkout master branch for repo: #{repo}".green
   parent_dir = Dir.pwd
   Dir.chdir("#{repo}")
-  system("git checkout master")
   
   if recursive && File.exists?("submodules.csv")
     puts "Recursing into #{repo} ...".blue
@@ -281,7 +279,11 @@ def gcm(repo="./", recursive=true)
     CSV.foreach("submodules.csv", :headers => true) do |row|
       gcm(row["Repo"], recursive)
     end
+    
+    puts "Recursion complete.".blue
   end
   
+  puts "Checkout master branch for repo: #{repo}".green
   Dir.chdir(parent_dir)
+  system("git checkout master")
 end
