@@ -71,7 +71,11 @@ end
 
 
 task :count, [:file_type] do |t, args|
-  count([:file_type])
+  unless args[:file_type].to_s.strip.empty?
+    count([args[:file_type]])
+  else
+    count(["*.rb"])
+  end
 end
 
 
@@ -88,7 +92,7 @@ def count(file_types)
   end
   
   command = "find . '(' #{name_part} ')' -print0 | xargs -0 wc -l"
-  puts command
+  puts command.green
   system(command)
 end
 
