@@ -5,6 +5,8 @@ RUBY = "2.0.0"
 
 DEFAULT_BRANCH = "master"
 
+HOME = File.expand_path("../", __FILE__)
+
 
 task :init do
   install()
@@ -87,7 +89,7 @@ def count(file_types)
     end
   end
   
-  command = "find . '(' #{name_part} ')' -print0 | xargs -0 wc -l"
+  command = "find #{HOME} '(' #{name_part} ')' -print0 | xargs -0 wc -l"
   puts command
   system(command)
 end
