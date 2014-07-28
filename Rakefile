@@ -24,11 +24,11 @@ end
 
 
 task :install do
-   install()
+   do_install()
 end
 
 
-def install()
+def do_install()
   install_gems()
 end
 
