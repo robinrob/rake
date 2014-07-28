@@ -71,8 +71,30 @@ end
 
 
 task :count, [:file_type] do |t, args|
+  count([:file_type])
+end
+
+
+def count(file_types)
   clean()
-  system("find . -name '*.#{args[:file_type]}' | xargs wc -l")
+  
+  name_part = ""
+  file_types.each_with_index do |file_type, i|
+    if i == 0
+      name_part += "-name '#{file_type}'"
+    else
+      name_part += " -o -name '#{file_type}'"
+    end
+  end
+  
+  command = "find . '(' #{name_part} ')' -print0 | xargs -0 wc -l"
+  puts command
+  system(command)
+end
+
+
+task :count_all do
+  count(["*.awk", "*.c", "*.cpp", "*.css", "*.html", "*.java", "*.js", "*.php", "*.pl", "*.py", "*.rb", "*.sh", "*.zsh"])
 end
 
 
