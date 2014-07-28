@@ -293,3 +293,33 @@ def gcm(repo="./", recursive=true)
   Dir.chdir(parent_dir)
   system("git checkout master")
 end
+
+
+task :sub_rks, [:submodule, :recursive] do |t, args|
+  submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  recursive = args[:recursive].nil? ? true : false
+  
+  puts "Recursive mode!".blue if recursive
+  
+  each_sub("rks", submodule, recursive)
+end
+
+
+def each_sub(command, repo="./", recursive=true)
+  parent_dir = Dir.pwd
+  Dir.chdir("#{repo}")
+  
+  if recursive && File.exists?("submodules.csv")
+    puts "Recursing into #{repo} ...".blue
+    
+    CSV.foreach("submodules.csv", :headers => true) do |row|
+      each_sub(command, row["Repo"], recursive)
+    end
+    
+    puts "Recursion complete.".blue
+  end
+  
+  puts "Entering repo: #{repo}".green
+  Dir.chdir(parent_dir)
+  system("zsh -c 'source ~/.zshrc && rks'")
+end
