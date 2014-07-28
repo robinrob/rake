@@ -290,8 +290,8 @@ def gcm(repo="./", recursive=true)
   end
   
   puts "Checkout master branch for repo: #{repo}".green
-  Dir.chdir(parent_dir)
   system("git checkout master")
+  Dir.chdir(parent_dir)
 end
 
 
@@ -320,6 +320,6 @@ def each_sub(command, repo="./", recursive=true)
   end
   
   puts "Entering repo: #{repo}".green
-  Dir.chdir(parent_dir)
   system("zsh -c 'source ~/.zshrc && rks'")
+  Dir.chdir(parent_dir)
 end
