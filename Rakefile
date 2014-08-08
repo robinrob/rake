@@ -152,6 +152,7 @@ end
 
 task :save do(branch="master")
   commit()
+  status()
   pull(branch)
   push(branch)
 end
