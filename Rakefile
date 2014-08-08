@@ -117,6 +117,11 @@ def commit()
 end
 
 
+task :add do
+  add()
+end
+
+
 def add()
   git("add -A")
 end
@@ -154,7 +159,6 @@ end
 
 task :save do(branch="master")
   commit()
-  status()
   pull(branch)
   push(branch)
 end
