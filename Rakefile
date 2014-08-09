@@ -5,6 +5,8 @@ RUBY = "2.0.0"
 
 DEFAULT_BRANCH = "master"
 
+HOME = File.expand_path("../", __FILE__)
+
 
 task :init do
   install()
@@ -24,11 +26,11 @@ end
 
 
 task :install do
-   install()
+   do_install()
 end
 
 
-def install()
+def do_install()
   install_gems()
 end
 
@@ -71,8 +73,34 @@ end
 
 
 task :count, [:file_type] do |t, args|
+  unless args[:file_type].to_s.strip.empty?
+    count([args[:file_type]])
+  else
+    count(["*.rb"])
+  end
+end
+
+
+def count(file_types)
   clean()
-  system("find . -name '*.#{args[:file_type]}' | xargs wc -l")
+  
+  name_part = ""
+  file_types.each_with_index do |file_type, i|
+    if i == 0
+      name_part += "-name '#{file_type}'"
+    else
+      name_part += " -o -name '#{file_type}'"
+    end
+  end
+  
+  command = "find #{HOME} '(' #{name_part} ')' -print0 | xargs -0 wc -l"
+  puts command.green
+  system(command)
+end
+
+
+task :count_all do
+  count(["*.awk", "*.c", "*.cpp", "*.css", "*.html", "*.java", "*.js", "*.php", "*.pl", "*.py", "*.rb", "*.sh", "*.zsh"])
 end
 
 
@@ -86,6 +114,11 @@ def commit()
   add()
   status()
   git("commit -m 'Auto-update'")
+end
+
+
+task :add do
+  add()
 end
 
 
@@ -262,6 +295,36 @@ def gcm(repo="./", recursive=true)
   end
   
   puts "Checkout master branch for repo: #{repo}".green
-  Dir.chdir(parent_dir)
   system("git checkout master")
+  Dir.chdir(parent_dir)
+end
+
+
+task :sub_rks, [:submodule, :recursive] do |t, args|
+  submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  recursive = args[:recursive].nil? ? true : false
+  
+  puts "Recursive mode!".blue if recursive
+  
+  each_sub("rks", submodule, recursive)
+end
+
+
+def each_sub(command, repo="./", recursive=true)
+  parent_dir = Dir.pwd
+  Dir.chdir("#{repo}")
+  
+  if recursive && File.exists?("submodules.csv")
+    puts "Recursing into #{repo} ...".blue
+    
+    CSV.foreach("submodules.csv", :headers => true) do |row|
+      each_sub(command, row["Repo"], recursive)
+    end
+    
+    puts "Recursion complete.".blue
+  end
+  
+  puts "Entering repo: #{repo}".green
+  system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
+  Dir.chdir(parent_dir)
 end
