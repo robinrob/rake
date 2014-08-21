@@ -71,7 +71,6 @@ task :test do
   puts "Needs implementing!"
 end
 
-
 task :count, [:file_type] do |t, args|
   unless args[:file_type].to_s.strip.empty?
     count([args[:file_type]])
@@ -103,17 +102,17 @@ task :count_all do
   count(["*.awk", "*.c", "*.cpp", "*.css", "*.html", "*.java", "*.js", "*.php", "*.pl", "*.py", "*.rb", "*.sh", "*.zsh"])
 end
 
-
-task :commit do
+task :commit, [:msg] do |t, args|
+  msg = args[:msg]
   commit()
 end
 
 
-def commit()
+def commit(msg="Auto-update")
   clean()
   add()
   status()
-  git("commit -m 'Auto-update'")
+  git("commit -m '#{msg}'")
 end
 
 
