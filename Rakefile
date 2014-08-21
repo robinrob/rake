@@ -155,8 +155,8 @@ def status
 end
 
 
-task :save do(branch="master")
-  commit()
+task :save, [:msg] do |t, args|
+  commit(args[:msg])
   pull(branch)
   push(branch)
 end
