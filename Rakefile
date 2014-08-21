@@ -103,8 +103,7 @@ task :count_all do
 end
 
 task :commit, [:msg] do |t, args|
-  msg = args[:msg]
-  commit()
+  commit(args[:msg])
 end
 
 
