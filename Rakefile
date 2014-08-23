@@ -28,11 +28,6 @@ end
 
 
 def install()
-  install_gems()
-end
-
-
-def install_gems()
   system("bundle install")
 end
 
@@ -164,10 +159,10 @@ end
 
 
 task :deploy do
-  Rake::Task["install"].execute()
-  Rake::Task["save"].execute()
-  system("rake assets:precompile")
-  system("git push heroku master")
+  # Rake::Task["install"].execute()
+  # Rake::Task["save"].execute()
+  # system("rake assets:precompile")
+  # system("git push heroku master")
 end
 
 
