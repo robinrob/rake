@@ -1,9 +1,6 @@
 require 'csv'
 require 'colorize'
 
-RUBY = "2.0.0"
-
-DEFAULT_BRANCH = "master"
 
 HOME = File.expand_path("../", __FILE__)
 
@@ -129,23 +126,23 @@ def add()
 end
 
 
-task :push do(branch="master")
-  push(branch)
+task :push do
+  push(branch())
 end
 
 
-def push(branch)
-  git("push origin " + branch)
+def push()
+  git("push origin " + branch())
 end
 
 
-task :pull do(branch="master")
-  pull(branch)
+task :pull do
+  pull()
 end
 
 
-def pull(branch)
-  git("pull origin " + branch)
+def pull()
+  git("pull origin " + branch())
 end
 
 
@@ -160,9 +157,9 @@ end
 
 
 task :save, [:msg] do |t, args|
-  commit(args[:msg])
-  pull(branch)
-  push(branch)
+  commit()
+  pull()
+  push()
 end
 
 
@@ -331,4 +328,8 @@ def each_sub(command, repo="./", recursive=true)
   puts "Entering repo: #{repo}".green
   system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
+end
+
+def branch()
+  `git branch`[2..-2]
 end
