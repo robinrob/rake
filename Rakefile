@@ -167,8 +167,10 @@ end
 
 
 task :deploy do
-  install()
-  git("push heroku master")
+  Rake::Task["install"].execute()
+  Rake::Task["save"].execute()
+  system("rake assets:precompile")
+  system("git push heroku master")
 end
 
 
