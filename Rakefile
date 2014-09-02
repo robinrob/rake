@@ -305,6 +305,16 @@ task :sub_rks, [:submodule, :recursive] do |t, args|
 end
 
 
+task :sub_cmd, [:command, :submodule, :recursive] do |t, args|
+  submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  recursive = args[:recursive].nil? ? true : false
+  
+  puts "Recursive mode!".blue if recursive
+  
+  each_sub(:command, submodule, recursive)
+end
+
+
 def each_sub(command, repo="./", recursive=true)
   parent_dir = Dir.pwd
   Dir.chdir("#{repo}")
@@ -320,6 +330,7 @@ def each_sub(command, repo="./", recursive=true)
   end
   
   puts "Entering repo: #{repo}".green
-  system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
+  `#{command}`
+  # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
 end
