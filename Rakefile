@@ -274,7 +274,7 @@ task :sub_gcm, [:submodule, :recursive] do |t, args|
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
   
-  puts "Recursive mode!".blue if recursive
+  puts "Recursive mode!".cyan if recursive
   
   gcm(submodule, recursive)
 end
@@ -285,13 +285,13 @@ def gcm(repo="./", recursive=true)
   Dir.chdir("#{repo}")
   
   if recursive && File.exists?("submodules.csv")
-    puts "Recursing into #{repo} ...".blue
+    puts "Recursing into #{repo} ...".cyan
     
     CSV.foreach("submodules.csv", :headers => true) do |row|
       gcm(row["Repo"], recursive)
     end
     
-    puts "Recursion complete.".blue
+    puts "Recursion complete.".cyan
   end
   
   puts "Checkout master branch for repo: #{repo}".green
@@ -304,7 +304,7 @@ task :sub_rks, [:submodule, :recursive] do |t, args|
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
   
-  puts "Recursive mode!".blue if recursive
+  puts "Recursive mode!".cyan if recursive
   
   each_sub("rks", submodule, recursive)
 end
@@ -315,13 +315,13 @@ def each_sub(command, repo="./", recursive=true)
   Dir.chdir("#{repo}")
   
   if recursive && File.exists?("submodules.csv")
-    puts "Recursing into #{repo} ...".blue
+    puts "Recursing into #{repo} ...".cyan
     
     CSV.foreach("submodules.csv", :headers => true) do |row|
       each_sub(command, row["Repo"], recursive)
     end
     
-    puts "Recursion complete.".blue
+    puts "Recursion complete.".cyan
   end
   
   puts "Entering repo: #{repo}".green
