@@ -302,17 +302,18 @@ task :sub_rks, [:submodule, :recursive] do |t, args|
   
   puts "Recursive mode!".cyan if recursive
   
-  each_sub("rks", submodule, recursive)
+  each_sub("rake save", submodule, recursive)
 end
 
 
 task :sub_cmd, [:command, :submodule, :recursive] do |t, args|
+  command = args[:command]
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
   
   puts "Recursive mode!".blue if recursive
   
-  each_sub(:command, submodule, recursive)
+  each_sub(command, submodule, recursive)
 end
 
 
@@ -332,6 +333,8 @@ def each_sub(command, repo="./", recursive=true)
   
   puts "Entering repo: #{repo}".green
   `#{command}`
+  # system("#{command}")
+  # system("git status")
   # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
 end
