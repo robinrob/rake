@@ -1,9 +1,6 @@
 require 'csv'
 require 'colorize'
 
-RUBY = "2.0.0"
-
-DEFAULT_BRANCH = "master"
 
 HOME = File.expand_path("../", __FILE__)
 
@@ -31,11 +28,6 @@ end
 
 
 def do_install()
-  install_gems()
-end
-
-
-def install_gems()
   system("bundle install")
 end
 
@@ -71,7 +63,6 @@ task :test do
   puts "Needs implementing!"
 end
 
-
 task :count, [:file_type] do |t, args|
   unless args[:file_type].to_s.strip.empty?
     count([args[:file_type]])
@@ -103,17 +94,20 @@ task :count_all do
   count(["*.awk", "*.c", "*.cpp", "*.css", "*.html", "*.java", "*.js", "*.php", "*.pl", "*.py", "*.rb", "*.sh", "*.zsh"])
 end
 
-
-task :commit do
-  commit()
+task :commit, [:msg] do |t, args|
+  if !args[:msg].nil?
+    commit(args[:msg])
+  else
+    commit()
+  end
 end
 
 
-def commit()
+def commit(msg="Auto-update")
   clean()
   add()
   status()
-  git("commit -m 'Auto-update'")
+  git("commit -m '#{msg}'")
 end
 
 
@@ -127,23 +121,23 @@ def add()
 end
 
 
-task :push do(branch="master")
-  push(branch)
+task :push do
+  push(branch())
 end
 
 
-def push(branch)
-  git("push origin " + branch)
+def push()
+  git("push origin " + branch())
 end
 
 
-task :pull do(branch="master")
-  pull(branch)
+task :pull do
+  pull()
 end
 
 
-def pull(branch)
-  git("pull origin " + branch)
+def pull()
+  git("pull origin " + branch())
 end
 
 
@@ -157,16 +151,18 @@ def status
 end
 
 
-task :save do(branch="master")
+task :save, [:msg] do |t, args|
   commit()
-  pull(branch)
-  push(branch)
+  pull()
+  push()
 end
 
 
 task :deploy do
-  install()
-  git("push heroku master")
+  Rake::Task["install"].execute()
+  Rake::Task["save"].execute()
+  system("rake assets:precompile")
+  system("git push heroku master")
 end
 
 
@@ -327,4 +323,8 @@ def each_sub(command, repo="./", recursive=true)
   puts "Entering repo: #{repo}".green
   system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
+end
+
+def branch()
+  `git branch`[2..-2]
 end
