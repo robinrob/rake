@@ -95,9 +95,9 @@ end
 
 
 task :save, [:msg] do |t, args|
-  Rake::Task["commit"].invoke()
-  Rake::Task["pull"].invoke()
-  Rake::Task["save"].invoke()
+  Rake::Task["commit"].execute()
+  Rake::Task["pull"].execute()
+  Rake::Task["push"].execute()
 end
 
 
