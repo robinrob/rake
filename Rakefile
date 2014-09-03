@@ -191,34 +191,24 @@ def deinit(submodule)
 end
 
 
-# This task recursively performs "git checkout master" for all submodules.
-# Recursion depends upon presence of file "submodules.csv" in each repo with submodules.
-# Recursion can be turned off by providing a value for second argument.
-#
-# Example: rake sub_gcm[projects/ruby]
-# Example: rake sub_gcm[projects/ruby, false]
-# Example: rake sub_gcm[./]
-# Example: rake sub_gcm
 task :sub_gcm, [:submodule, :recursive] do |t, args|
-  # submodule = args[:submodule].nil? ? "./" : args[:submodule]
-  # recursive = args[:recursive].nil? ? true : false
-  #
-  # puts "Recursive mode!".cyan if recursive
-  #
-  # gcm(submodule, recursive)
-  
-  Rake::Task["sub_cmd"].execute("git checkout master, #{:submodule}, #{:recursive}")
+  Rake::Task["sub_cmd"].invoke("git checkout master", args[:submodule], args[:recursive])
 end
 
 
+# This task recursively performs :command for all submodules.
+# Recursion depends upon presence of "submodules.csv" file in each repo with submodules.
+# Recursion can be turned off by providing a value for second argument.
 task :sub_cmd, [:command, :submodule, :recursive] do |t, args|
   command = args[:command]
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
   
-  puts "Recursive mode!".blue if recursive
+  unless command.nil?
+    puts "Recursive mode!".blue if recursive
   
-  each_sub(command, submodule, recursive)
+    each_sub(command, submodule, recursive)
+  end
 end
 
 
