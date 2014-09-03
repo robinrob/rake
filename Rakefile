@@ -12,48 +12,12 @@ task :init do
 end
 
 
-task :update do
-  update()
-end
-
-
-def update()
-  git("submodule foreach git pull origin master")
-end
-
-
 task :install do
-   do_install()
-end
-
-
-def do_install()
-  system("bundle install")
-end
-
-
-def install_ruby()
-  rvm("install " + RUBY)
-  use_ruby(RUBY)
-end
-
-
-def use_ruby(version)
-  rvm("use " + version)
-end
-
-
-def rvm(command)
-  system("rvm " + command)
+   system("bundle install")
 end
 
 
 task :clean do
-  clean()
-end
-
-
-def clean()
   system("find . -name '*~' -delete")
   system("find . -name '*.orig' -delete")
 end
@@ -62,6 +26,7 @@ end
 task :test do
   puts "Needs implementing!"
 end
+
 
 task :count, [:file_type, :dir] do |t, args|
   unless args[:file_type].to_s.strip.empty?
@@ -73,7 +38,7 @@ end
 
 
 def count(file_types, dir="./")
-  clean()
+  Rake::Task["clean"].execute()
   
   name_part = ""
   file_types.each_with_index do |file_type, i|
@@ -95,66 +60,44 @@ task :count_all do
 end
 
 task :commit, [:msg] do |t, args|
-  if !args[:msg].nil?
-    commit(args[:msg])
+  Rake::Task["clean"].execute()
+  Rake::Task["add"].execute()
+  Rake::Task["status"].execute()
+  
+  unless args[:msg].nil?
+    msg = args[:msg]
   else
-    commit()
+    msg = "Auto-update."
   end
-end
-
-
-def commit(msg="Auto-update")
-  clean()
-  add()
-  status()
+  
   git("commit -m '#{msg}'")
 end
 
 
 task :add do
-  add()
-end
-
-
-def add()
   git("add -A")
 end
 
 
 task :push do
-  push(branch())
-end
-
-
-def push()
   git("push origin " + branch())
 end
 
 
 task :pull do
-  pull()
-end
-
-
-def pull()
   git("pull origin " + branch())
 end
 
 
 task :status do
-  status()
-end
-
-
-def status
   git("status")
 end
 
 
 task :save, [:msg] do |t, args|
-  commit()
-  pull()
-  push()
+  Rake::Task["commit"].execute()
+  Rake::Task["pull"].execute()
+  Rake::Task["save"].execute()
 end
 
 
@@ -162,12 +105,7 @@ task :deploy do
   Rake::Task["install"].execute()
   Rake::Task["save"].execute()
   system("rake assets:precompile")
-  system("git push heroku master")
-end
-
-
-task :origin do
-  git("remote show origin")
+  git("push heroku master")
 end
 
 
@@ -219,7 +157,7 @@ end
 #
 # Example: rake sub_deinit[projects/ruby]
 # Example: rake sub_deinit[all]
-task  :sub_deinit, [:arg1] do |t, args|
+task :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
   
   if submodule == "all"
@@ -253,11 +191,6 @@ def deinit(submodule)
 end
 
 
-task :sub_update do
-  `git submodule update --init --recursive`
-end
-
-
 # This task recursively performs "git checkout master" for all submodules.
 # Recursion depends upon presence of file "submodules.csv" in each repo with submodules.
 # Recursion can be turned off by providing a value for second argument.
@@ -267,32 +200,14 @@ end
 # Example: rake sub_gcm[./]
 # Example: rake sub_gcm
 task :sub_gcm, [:submodule, :recursive] do |t, args|
-  submodule = args[:submodule].nil? ? "./" : args[:submodule]
-  recursive = args[:recursive].nil? ? true : false
+  # submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  # recursive = args[:recursive].nil? ? true : false
+  #
+  # puts "Recursive mode!".cyan if recursive
+  #
+  # gcm(submodule, recursive)
   
-  puts "Recursive mode!".cyan if recursive
-  
-  gcm(submodule, recursive)
-end
-
-
-def gcm(repo="./", recursive=true)
-  parent_dir = Dir.pwd
-  Dir.chdir("#{repo}")
-  
-  if recursive && File.exists?("submodules.csv")
-    puts "Recursing into #{repo} ...".cyan
-    
-    CSV.foreach("submodules.csv", :headers => true) do |row|
-      gcm(row["Repo"], recursive)
-    end
-    
-    puts "Recursion complete.".cyan
-  end
-  
-  puts "Checkout master branch for repo: #{repo}".green
-  system("git checkout master")
-  Dir.chdir(parent_dir)
+  Rake::Task["sub_cmd"].execute("git checkout master, #{:submodule}, #{:recursive}")
 end
 
 
@@ -326,6 +241,7 @@ def each_sub(command, repo="./", recursive=true)
   # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
   Dir.chdir(parent_dir)
 end
+
 
 def branch()
   `git branch`[2..-2]
