@@ -63,16 +63,16 @@ task :test do
   puts "Needs implementing!"
 end
 
-task :count, [:file_type] do |t, args|
+task :count, [:file_type, :dir] do |t, args|
   unless args[:file_type].to_s.strip.empty?
-    count([args[:file_type]])
+    count([args[:file_type]], args[:dir])
   else
-    count(["*.rb"])
+    count(["*.rb"], args[:dir])
   end
 end
 
 
-def count(file_types)
+def count(file_types, dir="./")
   clean()
   
   name_part = ""
@@ -84,7 +84,7 @@ def count(file_types)
     end
   end
   
-  command = "find #{HOME} '(' #{name_part} ')' -print0 | xargs -0 wc -l"
+  command = "find #{File.expand_path("../#{dir}", __FILE__)} '(' #{name_part} ')' -print0 | xargs -0 wc -l"
   puts command.green
   system(command)
 end
