@@ -99,9 +99,13 @@ end
 
 
 task :deploy do
+  puts ">install".green
   Rake::Task["install"].execute()
+  puts ">save".green
   Rake::Task["save"].execute()
+  puts ">precompile assets".green
   system("rake assets:precompile")
+  puts ">pushing to heroku".green
   git("push heroku master")
 end
 
