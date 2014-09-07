@@ -229,19 +229,15 @@ end
 
 # Ruby on Rails development
 task :server do
-  kill()
+  Rake::Task["kill"].execute()
   system("rails server")
 end
 
 
 task :kill do
-  kill()
-end
-
-
-def kill()
   system("kill `cat tmp/pids/server.pid 2> /dev/null` 2> /dev/null")
 end
+
 
 task :deploy do
   system("RAILS_ENV=production bundle exec rake assets:precompile")
