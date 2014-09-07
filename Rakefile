@@ -2,7 +2,10 @@ require 'csv'
 require 'colorize'
 
 
-HOME = File.expand_path("../", __FILE__)
+if File.exists?("config/application.rb")
+  require File.expand_path('../config/application', __FILE__)
+  Rails.application.load_tasks
+end
 
 
 task :init do
