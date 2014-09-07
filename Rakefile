@@ -2,9 +2,6 @@ require 'csv'
 require 'colorize'
 
 
-HOME = File.expand_path("../", __FILE__)
-
-
 task :init do
   install()
   git("submodule init")
