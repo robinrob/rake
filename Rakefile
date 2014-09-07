@@ -2,6 +2,7 @@ require 'csv'
 require 'colorize'
 
 
+# Ruby on Rails development
 if File.exists?("config/application.rb")
   require File.expand_path('../config/application', __FILE__)
   Rails.application.load_tasks
@@ -238,4 +239,30 @@ end
 
 def branch()
   `git branch`[2..-2]
+end
+
+
+# Ruby on Rails development
+task :server do
+  kill()
+  system("rails server")
+end
+
+
+task :kill do
+  kill()
+end
+
+
+def kill()
+  system("kill `cat tmp/pids/server.pid 2> /dev/null` 2> /dev/null")
+end
+
+task :deploy do
+  system("heroku run rake db:migrate")
+  system("RAILS_ENV=production bundle exec rake assets:precompile")
+  Rake::Task["install"].execute()
+  Rake::Task["save"].execute()
+  # system("rake assets:precompile")
+  system("git push heroku master")
 end
