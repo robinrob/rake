@@ -9,13 +9,6 @@ if File.exists?("config/application.rb")
 end
 
 
-task :init do
-  install()
-  git("submodule init")
-  update()
-end
-
-
 task :install do
    system("bundle install")
 end
@@ -28,7 +21,7 @@ end
 
 
 task :test do
-  puts "Needs implementing!"
+  puts "Needs implementing!".red
 end
 
 
@@ -259,10 +252,9 @@ def kill()
 end
 
 task :deploy do
-  system("heroku run rake db:migrate")
   system("RAILS_ENV=production bundle exec rake assets:precompile")
   Rake::Task["install"].execute()
   Rake::Task["save"].execute()
-  # system("rake assets:precompile")
   system("git push heroku master")
+  system("heroku run rake db:migrate")
 end
