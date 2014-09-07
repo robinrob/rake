@@ -256,9 +256,10 @@ def kill()
 end
 
 task :deploy do
+  system("heroku run rake db:migrate")
   system("RAILS_ENV=production bundle exec rake assets:precompile")
   Rake::Task["install"].execute()
   Rake::Task["save"].execute()
+  # system("rake assets:precompile")
   system("git push heroku master")
-  system("heroku run rake db:migrate")
 end
