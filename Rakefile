@@ -98,18 +98,6 @@ task :save, [:msg] do |t, args|
 end
 
 
-task :deploy do
-  puts ">install".green
-  Rake::Task["install"].execute()
-  puts ">save".green
-  Rake::Task["save"].execute()
-  puts ">precompile assets".green
-  system("rake assets:precompile")
-  puts ">pushing to heroku".green
-  git("push heroku master")
-end
-
-
 task :log do
   # Git formats
   git_log_medium_format = "%C(bold)Commit%C(reset) %C(green)%H%C(red)%d%n%C(bold)Author%C(reset) %C(cyan)%an <%ae>%n%C(bold)Date%C(reset)   %C(blue)%ai (%ar)%C(reset)%n%+B"
