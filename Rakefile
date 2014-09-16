@@ -16,7 +16,12 @@ end
 
 task :clean do
   system("find . -name '*~' -delete")
+  # Artifacts from git merge  
   system("find . -name '*.orig' -delete")
+  system("find . -name '*.BACKUP*' -delete")
+  system("find . -name '*.BASE*' -delete")
+  system("find . -name '*.LOCAL*' -delete")
+  system("find . -name '*.REMOTE*' -delete")
 end
 
 
@@ -229,19 +234,15 @@ end
 
 # Ruby on Rails development
 task :server do
-  kill()
+  Rake::Task["kill"].execute()
   system("rails server")
 end
 
 
 task :kill do
-  kill()
-end
-
-
-def kill()
   system("kill `cat tmp/pids/server.pid 2> /dev/null` 2> /dev/null")
 end
+
 
 task :deploy do
   system("RAILS_ENV=production bundle exec rake assets:precompile")
