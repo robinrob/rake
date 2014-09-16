@@ -245,6 +245,7 @@ end
 
 task :deploy do
   system("RAILS_ENV=production bundle exec rake assets:precompile")
+  # system("rake assets:precompile")
   Rake::Task["install"].execute()
   Rake::Task["save"].execute()
   # system("rake assets:precompile")
