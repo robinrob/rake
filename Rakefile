@@ -1,3 +1,5 @@
+$LOAD_PATH << '.'
+
 require 'csv'
 require 'colorize'
 
@@ -210,11 +212,12 @@ def each_sub(command, repo="./", recursive=true)
   parent_dir = Dir.pwd
   Dir.chdir("#{repo}")
   
-  if recursive && File.exists?("submodules.csv")
+  if recursive && File.exists?(".gitmodules")
     puts "Recursing into #{repo} ...".cyan
     
-    CSV.foreach("submodules.csv", :headers => true) do |row|
-      each_sub(command, row["Repo"], recursive)
+    submodules = GitConfigReader.new.read(".gitmodules")
+    submodules.each do |submodule|
+      each_sub(command, submodule[:path], recursive)
     end
     
     puts "Recursion complete.".cyan
@@ -252,4 +255,43 @@ task :deploy do
   # system("rake assets:precompile")
   system("git push heroku master")
   system("heroku run rake db:migrate")
+end
+
+
+class GitConfigReader
+
+  def read(filename='.gitconfig')
+    text = `cat #{filename}`
+
+    sections = []
+    result = text.split(/(\[.*\])/)[1..-1].each_slice(2) { |s| sections << read_section(s.join.split("\n")) }
+
+    sections
+  end
+
+
+  def read_section(lines)
+    section = {}
+
+    counter = 0
+    lines[0..-1].each do |line|
+      if counter == 0
+        comps = line.gsub('[', '').gsub(']', '').split(' ')
+        section['type'.to_sym] = comps[0]
+        if comps.length == 2 then section['name'.to_sym] = comps[1] end
+
+      elsif line.match(/.*=.*/)
+        comps = line.split('=')
+
+        key = comps[0].strip()
+        val = comps[1].strip()
+
+        section[key.to_sym] = val
+      end
+
+      counter += 1
+    end
+    section
+  end
+
 end
