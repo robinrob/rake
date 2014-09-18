@@ -24,6 +24,7 @@ task :clean do
   system("find . -name '*.BASE*' -delete")
   system("find . -name '*.LOCAL*' -delete")
   system("find . -name '*.REMOTE*' -delete")
+  system("find . -name '*.class' -delete")
 end
 
 
