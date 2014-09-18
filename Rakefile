@@ -262,9 +262,13 @@ class GitConfigReader
 
   def read(filename='.gitconfig')
     text = `cat #{filename}`
+    text.strip()
 
     sections = []
-    result = text.split(/(\[.*\])/)[1..-1].each_slice(2) { |s| sections << read_section(s.join.split("\n")) }
+
+    unless text == ''
+      text.split(/(\[.*\])/)[1..-1].each_slice(2) { |s| sections << read_section(s.join.split("\n")) }
+    end
 
     sections
   end
