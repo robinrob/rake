@@ -217,7 +217,11 @@ def each_sub(command, repo="./", recursive=true)
     
     submodules = GitConfigReader.new.read(".gitmodules")
     submodules.each do |submodule|
-      each_sub(command, submodule[:path], recursive)
+      if submodule[:owner] == 'robinrob'
+        each_sub(command, submodule[:path], recursive)
+      else
+        puts "Owner not robinrob!".red
+      end
     end
     
     puts "Recursion complete.".cyan
@@ -295,6 +299,7 @@ class GitConfigReader
 
       counter += 1
     end
+    section[:owner] = section[:url].split(':')[1].split('/')[0]
     section
   end
 
