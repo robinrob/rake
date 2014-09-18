@@ -135,19 +135,6 @@ def git(command)
 end
 
 
-task :sub_add do
-  
-  CSV.foreach("submodules.csv", :headers => true) do |row|
-  
-    repo = row['Repo']
-    url = row['URL']
-    branch = row['Branch']
-  
-    system("git submodule add -b #{branch} -f #{url} #{repo}")
-  end
-  
-end
-
 
 # This task de-initialises the specified submodule, given by its relative path.
 #
@@ -155,26 +142,7 @@ end
 # Example: rake sub_deinit[all]
 task :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
-  
-  if submodule == "all"
-    deinit_all()
-  else
-    deinit(submodule)
-  end
-  
-end
-
-
-def deinit_all()
-
-  CSV.foreach("submodules.csv", :headers => true) do |row|
-
-    deinit(row['Repo'])
-  
-  end
-
-  # `rm -rf .git/modules/`
-
+  deinit(submodule)
 end
 
 
@@ -187,15 +155,7 @@ def deinit(submodule)
 end
 
 
-task :sub_gcm, [:submodule, :recursive] do |t, args|
-  Rake::Task["sub_cmd"].invoke("git checkout master", args[:submodule], args[:recursive])
-end
-
-
-# This task recursively performs :command for all submodules.
-# Recursion depends upon presence of "submodules.csv" file in each repo with submodules.
-# Recursion can be turned off by providing a value for second argument.
-task :sub_cmd, [:command, :submodule, :recursive] do |t, args|
+task :each_sub, [:command, :submodule, :recursive] do |t, args|
   command = args[:command]
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
@@ -264,6 +224,8 @@ task :deploy do
 end
 
 
+# Reads a with format of .gitconfig, for example .gitmodules and returns an array of hashes.
+# Each hash represents a section of the config file, containing the config in a 'flat' csv-like structure.
 class GitConfigReader
 
   def read(filename='.gitconfig')
@@ -304,5 +266,5 @@ class GitConfigReader
     section[:owner] = section[:url].split(':')[1].split('/')[0]
     section
   end
-
+  
 end
