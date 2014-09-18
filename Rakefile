@@ -1,3 +1,5 @@
+$LOAD_PATH << '.'
+
 require 'csv'
 require 'colorize'
 
@@ -211,11 +213,18 @@ def each_sub(command, repo="./", recursive=true)
   parent_dir = Dir.pwd
   Dir.chdir("#{repo}")
   
-  if recursive && File.exists?("submodules.csv")
+  if recursive && File.exists?(".gitmodules")
     puts "Recursing into #{repo} ...".cyan
     
-    CSV.foreach("submodules.csv", :headers => true) do |row|
-      each_sub(command, row["Repo"], recursive)
+    submodules = GitConfigReader.new.read(".gitmodules")
+    submodules.each do |submodule|
+      owner = submodule[:owner]
+      robinrob = 'robinrob'
+      if owner == robinrob
+        each_sub(command, submodule[:path], recursive)
+      else
+        puts "Owner #{owner} not #{robinrob}!".red
+      end
     end
     
     puts "Recursion complete.".cyan
@@ -247,9 +256,54 @@ end
 
 task :deploy do
   system("RAILS_ENV=production bundle exec rake assets:precompile")
+  # system("rake assets:precompile")
   Rake::Task["install"].execute()
   Rake::Task["save"].execute()
   # system("rake assets:precompile")
   system("git push heroku master")
   system("heroku run rake db:migrate")
+end
+
+
+class GitConfigReader
+
+  def read(filename='.gitconfig')
+    text = `cat #{filename}`
+    text.strip()
+
+    sections = []
+
+    unless text == ''
+      text.split(/(\[.*\])/)[1..-1].each_slice(2) { |s| sections << read_section(s.join.split("\n")) }
+    end
+
+    sections
+  end
+
+
+  def read_section(lines)
+    section = {}
+
+    counter = 0
+    lines[0..-1].each do |line|
+      if counter == 0
+        comps = line.gsub('[', '').gsub(']', '').split(' ')
+        section['type'.to_sym] = comps[0]
+        if comps.length == 2 then section['name'.to_sym] = comps[1] end
+
+      elsif line.match(/.*=.*/)
+        comps = line.split('=')
+
+        key = comps[0].strip()
+        val = comps[1].strip()
+
+        section[key.to_sym] = val
+      end
+
+      counter += 1
+    end
+    section[:owner] = section[:url].split(':')[1].split('/')[0]
+    section
+  end
+
 end
