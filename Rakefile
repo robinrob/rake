@@ -163,36 +163,10 @@ task :each_sub, [:command, :submodule, :recursive] do |t, args|
   unless command.nil?
     puts "Recursive mode!".blue if recursive
   
-    each_sub(command, submodule, recursive)
+    SubDoer.each_sub(command, submodule, recursive)
   end
-end
 
-
-def each_sub(command, repo="./", recursive=true)
-  parent_dir = Dir.pwd
-  Dir.chdir("#{repo}")
-  
-  if recursive && File.exists?(".gitmodules")
-    puts "Recursing into #{repo} ...".cyan
-    
-    submodules = GitConfigReader.new.read(".gitmodules")
-    submodules.each do |submodule|
-      owner = submodule[:owner]
-      robinrob = 'robinrob'
-      if owner == robinrob
-        each_sub(command, submodule[:path], recursive)
-      else
-        puts "Owner #{owner} not #{robinrob}!".red
-      end
-    end
-    
-    puts "Recursion complete.".cyan
-  end
-  
-  puts "Entering repo: #{repo}".green
-  `#{command}`
-  # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
-  Dir.chdir(parent_dir)
+  puts "Ran for ".green << "#{SubDoer.counter}".yellow << " repositories.".green
 end
 
 
@@ -224,6 +198,47 @@ task :deploy do
 end
 
 
+class SubDoer
+  @@counter = 0
+
+
+  def self.counter
+    @@counter
+  end
+
+
+  def self.each_sub(command, repo="./", recursive=true)
+    @@counter += 1
+    parent_dir = Dir.pwd
+    Dir.chdir("#{repo.strip}")
+
+    if recursive && File.exists?(".gitmodules")
+      puts "Recursing into #{repo} ...".cyan
+
+      submodules = GitConfigReader.new.read(".gitmodules")
+
+      submodules.each do |submodule|
+        owner = submodule[:owner]
+        robinrob = 'robinrob'
+
+        if owner == robinrob
+          each_sub(command, submodule[:path], recursive)
+        else
+          puts "Owner ".red << "#{owner.yellow}" << " not #{robinrob}!".red
+        end
+      end
+
+      puts "Recursion complete.".cyan
+    end
+
+    puts "Entering repo: #{repo}".green
+    `#{command}`
+    # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
+    Dir.chdir(parent_dir)
+  end
+end
+
+
 # Reads a with format of .gitconfig, for example .gitmodules and returns an array of hashes.
 # Each hash represents a section of the config file, containing the config in a 'flat' csv-like structure.
 class GitConfigReader
@@ -241,7 +256,7 @@ class GitConfigReader
     sections
   end
 
-
+  private
   def read_section(lines)
     section = {}
 
@@ -263,8 +278,18 @@ class GitConfigReader
 
       counter += 1
     end
-    section[:owner] = section[:url].split(':')[1].split('/')[0]
+    section[:owner] = parse_owner(section[:url])
     section
+  end
+
+
+  def parse_owner(repo)
+    repo.strip!
+    if repo.include?('https')
+      repo.split('/')[3].split('/')[0]
+    else
+      repo.split(':')[1].split('/')[0]
+    end
   end
   
 end
