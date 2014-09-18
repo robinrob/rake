@@ -217,10 +217,12 @@ def each_sub(command, repo="./", recursive=true)
     
     submodules = GitConfigReader.new.read(".gitmodules")
     submodules.each do |submodule|
-      if submodule[:owner] == 'robinrob'
+      owner = submodule[:owner]
+      robinrob = 'robinrob'
+      if owner == robinrob
         each_sub(command, submodule[:path], recursive)
       else
-        puts "Owner not robinrob!".red
+        puts "Owner #{owner} not #{robinrob}!".red
       end
     end
     
