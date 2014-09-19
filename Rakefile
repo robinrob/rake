@@ -5,10 +5,10 @@ require 'colorize'
 
 
 # Ruby on Rails development
-if File.exists?("config/application.rb")
-  require File.expand_path('../config/application', __FILE__)
-  Rails.application.load_tasks
-end
+# if File.exists?("config/application.rb")
+#   require File.expand_path('../config/application', __FILE__)
+#   Rails.application.load_tasks
+# end
 
 
 task :install do
