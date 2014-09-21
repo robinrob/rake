@@ -5,10 +5,10 @@ require 'colorize'
 
 
 # Ruby on Rails development
-# if File.exists?("config/application.rb")
-#   require File.expand_path('../config/application', __FILE__)
-#   Rails.application.load_tasks
-# end
+if File.exists?("config/application.rb")
+  require File.expand_path('../config/application', __FILE__)
+  Rails.application.load_tasks
+end
 
 
 task :install do
@@ -160,14 +160,16 @@ task :each_sub, [:command, :submodule, :recursive] do |t, args|
   command = args[:command]
   submodule = args[:submodule].nil? ? "./" : args[:submodule]
   recursive = args[:recursive].nil? ? true : false
+
+  doer = SubDoer.new
   
   unless command.nil?
     puts "Recursive mode!".blue if recursive
   
-    SubDoer.each_sub(command, submodule, recursive)
+    doer.each_sub(command, submodule, recursive)
   end
 
-  puts "Ran for ".green << "#{SubDoer.counter}".yellow << " repositories.".green
+  puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green
 end
 
 
@@ -200,21 +202,26 @@ end
 
 
 class SubDoer
-  @@counter = 0
 
 
-  def self.counter
-    @@counter
+  attr_accessor :counter
+
+  def initialize
+    @indent=""
+    @nesting=0
+    @counter=0
+    @path=""
   end
 
 
-  def self.each_sub(command, repo="./", recursive=true)
-    @@counter += 1
+  def each_sub(command, repo=`echo ${PWD##*/}`, recursive=true)
+    @counter += 1
     parent_dir = Dir.pwd
     Dir.chdir("#{repo.strip}")
 
+    if @nesting == 1 then puts "Recursing into #{repo} ...".cyan end
     if recursive && File.exists?(".gitmodules")
-      puts "Recursing into #{repo} ...".cyan
+      # puts "Recursing into #{repo} ...".cyan
 
       submodules = GitConfigReader.new.read(".gitmodules")
 
@@ -223,18 +230,24 @@ class SubDoer
         robinrob = 'robinrob'
 
         if owner == robinrob
+          @indent << "\t|"
+          @nesting += 1
+          # @path << "#{repo}/"
           each_sub(command, submodule[:path], recursive)
         else
           puts "Owner ".red << "#{owner.yellow}" << " not #{robinrob}!".red
         end
       end
 
-      puts "Recursion complete.".cyan
+      # puts "Recursion complete.".green
     end
 
-    puts "Entering repo: #{repo}".green
+    puts "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>Entering repo: ".green << "#{repo}".cyan
+    # puts "#{"\t|" * @nesting}".cyan
     `#{command}`
-    # system("zsh -c 'source ~/.zshrc > /dev/null && rks'")
+    @indent = @indent[0..-3]
+    @nesting -= 1
+    @path = @path.split("/")[0..-2].join("/")
     Dir.chdir(parent_dir)
   end
 end
@@ -243,6 +256,8 @@ end
 # Reads a with format of .gitconfig, for example .gitmodules and returns an array of hashes.
 # Each hash represents a section of the config file, containing the config in a 'flat' csv-like structure.
 class GitConfigReader
+
+  Indent=4
 
   def read(filename='.gitconfig')
     text = `cat #{filename}`
