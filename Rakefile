@@ -1,7 +1,10 @@
 $LOAD_PATH << '.'
+$LOAD_PATH << 'rake'
 
 require 'csv'
 require 'colorize'
+require 'subdoer'
+require 'gitconfigreader'
 
 
 # Ruby on Rails development
@@ -156,17 +159,17 @@ def deinit(submodule)
 end
 
 
-task :each_sub, [:command, :submodule, :recursive] do |t, args|
+task :each_sub, [:command, :start_repo, :recursive] do |t, args|
   command = args[:command]
-  submodule = args[:submodule].nil? ? "./" : args[:submodule]
+  start_repo = args[:start_repo].nil? ? "./" : args[:start_repo]
   recursive = args[:recursive].nil? ? true : false
 
-  doer = SubDoer.new
+  doer = SubDoer.new(start_repo)
   
   unless command.nil?
     puts "Recursive mode!".blue if recursive
   
-    doer.each_sub(command, submodule, recursive)
+    doer.each_sub(command, recursive)
   end
 
   puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green \
@@ -199,116 +202,4 @@ task :deploy do
   # system("rake assets:precompile")
   system("git push heroku master")
   system("heroku run rake db:migrate")
-end
-
-
-class SubDoer
-
-
-  attr_accessor :counter, :max_nesting
-
-  def initialize
-    @indent=""
-    @nesting=0
-    @max_nesting=@nesting
-    @counter=0
-    @path=""
-  end
-
-
-  def each_sub(command, repo=`echo ${PWD##*/}`, recursive=true)
-    @counter += 1
-    parent_dir = Dir.pwd
-    Dir.chdir("#{repo.strip}")
-
-    if @nesting == 1 then puts "Recursing into #{repo} ...".cyan end
-    if recursive && File.exists?(".gitmodules")
-      # puts "Recursing into #{repo} ...".cyan
-
-      submodules = GitConfigReader.new.read(".gitmodules")
-
-      submodules.each do |submodule|
-        owner = submodule[:owner]
-        robinrob = 'robinrob'
-
-        if owner == robinrob
-          @indent << "\t|"
-          @nesting += 1
-          @nesting > @max_nesting ? @max_nesting = @nesting : false
-          # @path << "#{repo}/"
-          each_sub(command, submodule[:path], recursive)
-        else
-          puts "Owner ".red << "#{owner.yellow}" << " not #{robinrob}!".red
-        end
-      end
-
-      # puts "Recursion complete.".green
-    end
-
-    puts "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>Entering repo: ".green << "#{repo}".cyan
-    # puts "#{"\t|" * @nesting}".cyan
-    `#{command}`
-    @indent = @indent[0..-3]
-    @nesting -= 1
-    @path = @path.split("/")[0..-2].join("/")
-    Dir.chdir(parent_dir)
-  end
-end
-
-
-# Reads a with format of .gitconfig, for example .gitmodules and returns an array of hashes.
-# Each hash represents a section of the config file, containing the config in a 'flat' csv-like structure.
-class GitConfigReader
-
-  Indent=4
-
-  def read(filename='.gitconfig')
-    text = `cat #{filename}`
-    text.strip()
-
-    sections = []
-
-    unless text == ''
-      text.split(/(\[.*\])/)[1..-1].each_slice(2) { |s| sections << read_section(s.join.split("\n")) }
-    end
-
-    sections
-  end
-
-  private
-  def read_section(lines)
-    section = {}
-
-    counter = 0
-    lines[0..-1].each do |line|
-      if counter == 0
-        comps = line.gsub('[', '').gsub(']', '').split(' ')
-        section['type'.to_sym] = comps[0]
-        if comps.length == 2 then section['name'.to_sym] = comps[1] end
-
-      elsif line.match(/.*=.*/)
-        comps = line.split('=')
-
-        key = comps[0].strip()
-        val = comps[1].strip()
-
-        section[key.to_sym] = val
-      end
-
-      counter += 1
-    end
-    section[:owner] = parse_owner(section[:url])
-    section
-  end
-
-
-  def parse_owner(repo)
-    repo.strip!
-    if repo.include?('https')
-      repo.split('/')[3].split('/')[0]
-    else
-      repo.split(':')[1].split('/')[0]
-    end
-  end
-  
 end
