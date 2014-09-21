@@ -169,7 +169,8 @@ task :each_sub, [:command, :submodule, :recursive] do |t, args|
     doer.each_sub(command, submodule, recursive)
   end
 
-  puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green
+  puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green \
+  << " Max nesting: ".green << "#{doer.max_nesting}".yellow << ".".green
 end
 
 
@@ -204,11 +205,12 @@ end
 class SubDoer
 
 
-  attr_accessor :counter
+  attr_accessor :counter, :max_nesting
 
   def initialize
     @indent=""
     @nesting=0
+    @max_nesting=@nesting
     @counter=0
     @path=""
   end
@@ -232,6 +234,7 @@ class SubDoer
         if owner == robinrob
           @indent << "\t|"
           @nesting += 1
+          @nesting > @max_nesting ? @max_nesting = @nesting : false
           # @path << "#{repo}/"
           each_sub(command, submodule[:path], recursive)
         else
