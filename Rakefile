@@ -5,6 +5,7 @@ require 'csv'
 require 'colorize'
 require 'subdoer'
 require 'gitconfigreader'
+require 'rake/testtask'
 
 
 # Ruby on Rails development
@@ -32,7 +33,12 @@ end
 
 
 task :test do
-  puts "Needs implementing!".red
+  Rake::TestTask.new do |t|
+    t.libs << "practice"
+    t.test_files = FileList['practice/test*.rb']
+    t.test_files = FileList['test*.rb']
+    t.verbose = true
+  end
 end
 
 
