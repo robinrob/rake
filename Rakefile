@@ -167,7 +167,7 @@ task :each_sub, [:command, :start_repo, :recursive] do |t, args|
   doer = SubDoer.new(start_repo)
   
   unless command.nil?
-    puts "Recursive mode!".blue if recursive
+    puts "Recursive mode!".light_blue if recursive
   
     doer.each_sub(command, recursive)
   end

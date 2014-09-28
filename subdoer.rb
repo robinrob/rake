@@ -27,8 +27,8 @@ class SubDoer
     parent_dir = Dir.pwd
     Dir.chdir("#{repo.strip}")
 
-    if @nesting == 1 then puts "#{@indent}Recursing into #{repo} ...".cyan end
     if recursive && File.exists?(".gitmodules")
+      puts "#{@indent}Recursing into #{repo} ...".light_cyan
 
       submodules = GitConfigReader.new.read(".gitmodules")
 
@@ -36,14 +36,18 @@ class SubDoer
         owner = submodule[:owner]
         robinrob = 'robinrob'
 
+        @indent << "\t\t|"
+        @nesting += 1
+
         if owner == robinrob
-          @indent << "\t|"
-          @nesting += 1
           @nesting > @max_nesting ? @max_nesting = @nesting : false
           # @path << "#{repo}/"
           _each_sub(command, submodule[:path], recursive)
         else
-          puts "Owner ".red << "#{owner.yellow}" << " not #{robinrob}!".red
+          puts "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>".green << "Owner ".red << "#{owner
+          .yellow}" << " of repo ".red << "#{submodule[:path]}".yellow << " not #{robinrob}!".red
+          @nesting -= 1
+          @indent = @indent[0..-4]
         end
       end
 
@@ -58,6 +62,6 @@ class SubDoer
     @nesting -= 1
     # if @nesting == 0 then puts end
     # if @nesting == 0 then puts "#{@indent}---------------------------------------------------------------------------".cyan end
-    @indent = @indent[0..-3]
+    @indent = @indent[0..-4]
   end
 end
