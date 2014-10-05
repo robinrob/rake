@@ -1,5 +1,8 @@
 class SubDoer
 
+  Indentation = "\t\t|"
+  Me = 'robinrob'
+
 
   attr_accessor :counter, :max_nesting
 
@@ -16,52 +19,74 @@ class SubDoer
 
 
   public
-  def each_sub(command, recursive=true)
-    _each_sub(command, @start_repo, recursive)
+  def each_sub(command, config={})
+    _each_sub(command, @start_repo, config)
   end
 
 
   private
-  def _each_sub(command, repo, recursive=true)
+  def _each_sub(command, repo, config={})
     @counter += 1
     parent_dir = Dir.pwd
     Dir.chdir("#{repo.strip}")
 
-    if recursive && File.exists?(".gitmodules")
+    if config[:recursive] && File.exists?(".gitmodules")
       puts "#{@indent}Recursing into #{repo} ...".light_cyan
 
-      submodules = GitConfigReader.new.read(".gitmodules")
+      GitConfigReader.new.read(".gitmodules").each do |submodule|
+        nest
 
-      submodules.each do |submodule|
-        owner = submodule[:owner]
-        robinrob = 'robinrob'
-
-        @indent << "\t\t|"
-        @nesting += 1
-
-        if owner == robinrob
-          @nesting > @max_nesting ? @max_nesting = @nesting : false
-          # @path << "#{repo}/"
-          _each_sub(command, submodule[:path], recursive)
+        if submodule[:owner] == Me
+          _each_sub(command, submodule[:path], config)
         else
-          puts "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>".green << "Owner ".red << "#{owner
-          .yellow}" << " of repo ".red << "#{submodule[:path]}".yellow << " not #{robinrob}!".red
-          @nesting -= 1
-          @indent = @indent[0..-4]
+          puts "#{arrow} #{repo_owner(submodule[:owner], submodule[:path])} #{not_me}"
         end
       end
-
-      # puts "Recursion complete.".green
     end
 
-    # @path = File.expand_path(Dir.new('./')).split("/")[-2..-1].join("/")
-    puts "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>Entering repo: ".green << "#{repo}".cyan
+    puts entering_repo(repo)
     `#{command}`
-    Dir.chdir(parent_dir)
 
-    @nesting -= 1
-    # if @nesting == 0 then puts end
-    # if @nesting == 0 then puts "#{@indent}---------------------------------------------------------------------------".cyan end
-    @indent = @indent[0..-4]
+    denest_to(parent_dir)
   end
+
+
+  def arrow
+    "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>".green
+  end
+
+
+  def repo_owner(owner, repo)
+    "Owner ".red << "#{owner.yellow}" << " of repo ".red << "#{repo}".yellow
+  end
+
+
+  def not_me
+    "not #{Me}!".red
+  end
+
+
+  def entering_repo(repo)
+    "#{@indent}".cyan << "[".green << "#{@nesting}".cyan << "]>Entering repo: ".green << "#{repo}".cyan
+  end
+
+
+  def nest
+    @nesting += 1
+    @nesting > @max_nesting ? @max_nesting = @nesting : false
+    indent
+  end
+
+
+  def denest_to(parent_dir)
+    @nesting -= 1
+    indent
+    Dir.chdir(parent_dir)
+  end
+
+
+  def indent
+    @indent = Indentation * @nesting
+  end
+
 end

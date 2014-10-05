@@ -174,8 +174,9 @@ task :each_sub, [:command, :start_repo, :recursive] do |t, args|
   
   unless command.nil?
     puts "Recursive mode!".light_blue if recursive
-  
-    doer.each_sub(command, recursive)
+
+    config = { :recursive => true }
+    doer.each_sub(command, config)
   end
 
   puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green \
