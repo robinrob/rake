@@ -165,17 +165,18 @@ def deinit(submodule)
 end
 
 
-task :each_sub, [:command, :start_repo, :recursive] do |t, args|
+task :each_sub, [:command, :recurse_down, :recursive] do |t, args|
   command = args[:command]
-  start_repo = args[:start_repo].nil? ? "./" : args[:start_repo]
+  recurse_down = args[:recurse_down].nil? ? false : true
   recursive = args[:recursive].nil? ? true : false
 
-  doer = SubDoer.new(start_repo)
+  config = { :recursive => true, :recurse_down => recurse_down}
+
+  doer = SubDoer.new()
   
   unless command.nil?
     puts "Recursive mode!".light_blue if recursive
 
-    config = { :recursive => true }
     doer.each_sub(command, config)
   end
 
