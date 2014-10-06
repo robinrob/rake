@@ -1,4 +1,8 @@
-# Reads a with format of .gitconfig, for example .gitmodules and returns an array of hashes.
+$LOAD_PATH << '.'
+
+require 'gitconfigblock'
+
+# Reads a file with format of .gitconfig, for example .gitmodules and returns an array of hashes.
 # Each hash represents a section of the config file, containing the config in a 'flat' csv-like structure.
 class GitConfigReader
 

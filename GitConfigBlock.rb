@@ -1,4 +1,6 @@
 class GitConfigBlock
+  AttributeIndent = 2
+
   attr_accessor :name, :type, :attrs
 
   def initialize(block)
@@ -11,7 +13,7 @@ class GitConfigBlock
   def to_s
     str = "[#{@type} = \"#{@name}\"]\n"
     @attrs.each do |attr|
-      str += "  #{attr[:name]} = #{attr[:value]}\n"
+      str += (" " * AttributeIndent) << "#{attr[:name]} = #{attr[:value]}\n"
     end
     str
   end
