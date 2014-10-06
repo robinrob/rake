@@ -49,8 +49,8 @@ class TestGitConfigReader < Test::Unit::TestCase
 	path = ruby
 	url = git@bitbucket.org:robinrob/ruby.git
 	branch = master
-    END
-    File.write('.gitconfig_test', File::WRONLY) do |file|
+END
+    File.open('.gitconfig_test', File::WRONLY | File::CREAT) do |file|
       file.write(gitconfig_contents)
     end
   end
@@ -61,12 +61,23 @@ class TestGitConfigReader < Test::Unit::TestCase
   end
 
 
-  def test_should_read_10_gitconfig_blocks()
+  def test_should_read_10_blocks()
     reader = GitConfigReader.new
 
     blocks = reader.read(filename='.gitconfig_test')
 
     assert_equal(10, blocks.length)
+  end
+
+
+  def test_should_read_10_gitconfigblocks()
+    reader = GitConfigReader.new
+
+    blocks = reader.read(filename='.gitconfig_test')
+
+    blocks.each do |block|
+      assert(block.instance_of? GitConfigBlock)
+    end
   end
 
 end
