@@ -5,6 +5,7 @@ require 'csv'
 require 'colorize'
 require 'subdoer'
 require 'gitconfigreader'
+require 'gitconfigwriter'
 require 'rake/testtask'
 
 
@@ -150,13 +151,14 @@ task :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
 
   puts "Deinit repo: ".red + "#{submodule}".green
-  # `rm -rf #{submodule}`
-  # `git rm -rf --ignore-unmatch --cached #{submodule}`
-  # `git submodule deinit #{submodule} 2> /dev/null`
+  `rm -rf #{submodule}`
+  `git rm -rf --ignore-unmatch --cached #{submodule}`
+  `git submodule deinit #{submodule} 2> /dev/null`
 
   repos = GitConfigReader.new.read(filename='.gitmodules')
-  repo = repos.find{ |repo| repo[:name] == submodule }
-  puts "repo #{repo}"
+  repo = repos.find{ |repo| repo.name == submodule }
+  repos.delete(repo)
+  puts "repo: #{repo}"
 
   GitConfigWriter.new.write(repos, filename='.gitmodules')
 end

@@ -13,7 +13,7 @@ class GitConfigBlock
 
 
   def to_s
-    str = "[#{@type} = \"#{@name}\"]\n"
+    str = "[#{@type} \"#{@name}\"]\n"
     @attrs.keys.each do |key|
       str += "  #{key} = #{@attrs[key]}\n"
     end
