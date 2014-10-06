@@ -160,7 +160,9 @@ def deinit(submodule)
   `rm -rf #{submodule}`
   `git rm -rf --ignore-unmatch --cached #{submodule}`
   `git submodule deinit #{submodule} 2> /dev/null`
-  # `rm -rf .git/modules/#{repo}`
+  repos = GitConfigReader.new.read(filename='.gitmodules')
+  repos.select{ |repo| if repo[:name] == submodule then repos.delete(repo) end}
+  GitConfigWriter.write(repos, filename='.gitmodules')
 end
 
 
