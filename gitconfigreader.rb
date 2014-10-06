@@ -25,8 +25,8 @@ class GitConfigReader
     lines[0..-1].each do |line|
       if counter == 0
         comps = line.gsub('[', '').gsub(']', '').split(' ')
-        section['type'.to_sym] = comps[0]
-        if comps.length == 2 then section['name'.to_sym] = comps[1] end
+        section[:type] = comps[0]
+        if comps.length == 2 then section[:name] = comps[1] end
 
       elsif line.match(/.*=.*/)
         comps = line.split('=')

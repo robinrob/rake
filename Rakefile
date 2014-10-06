@@ -34,8 +34,7 @@ end
 
 task :test do
   Rake::TestTask.new do |t|
-    t.libs << "practice"
-    t.test_files = FileList['practice/test*.rb']
+    t.libs << "."
     t.test_files = FileList['test*.rb']
     t.verbose = true
   end
