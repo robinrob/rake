@@ -37,7 +37,9 @@ class GitConfigBlock
         block[:attrs][key.to_sym] = val
       end
     end
-    block[:attrs][:owner] = parse_owner(block[:attrs][:url])
+    unless block[:attrs][:url].nil?
+      block[:attrs][:owner] = parse_owner(block[:attrs][:url])
+    end
 
     block
   end

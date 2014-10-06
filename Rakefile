@@ -146,23 +146,19 @@ end
 
 
 # This task de-initialises the specified submodule, given by its relative path.
-#
-# Example: rake sub_deinit[projects/ruby]
-# Example: rake sub_deinit[all]
 task :sub_deinit, [:arg1] do |t, args|
   submodule = args[:arg1]
-  deinit(submodule)
-end
 
-
-def deinit(submodule)
   puts "Deinit repo: ".red + "#{submodule}".green
-  `rm -rf #{submodule}`
-  `git rm -rf --ignore-unmatch --cached #{submodule}`
-  `git submodule deinit #{submodule} 2> /dev/null`
+  # `rm -rf #{submodule}`
+  # `git rm -rf --ignore-unmatch --cached #{submodule}`
+  # `git submodule deinit #{submodule} 2> /dev/null`
+
   repos = GitConfigReader.new.read(filename='.gitmodules')
-  repos.select{ |repo| if repo[:name] == submodule then repos.delete(repo) end}
-  GitConfigWriter.write(repos, filename='.gitmodules')
+  repo = repos.find{ |repo| repo[:name] == submodule }
+  puts "repo #{repo}"
+
+  GitConfigWriter.new.write(repos, filename='.gitmodules')
 end
 
 
