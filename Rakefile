@@ -210,3 +210,14 @@ task :deploy do
   system("git push heroku master")
   system("heroku run rake db:migrate")
 end
+
+# Convert new ruby hash syntax into normal syntax
+task :hashes do
+  cmd = "gfind . -iregex '.*\\(rb\\|haml\\)' -printf '%p\n'"
+  files = `#{cmd}`.split("\n")
+
+  files.each do |file|
+    puts "Converting file: ".green << "#{file}".yellow
+    `gsed -i "s/\\([a-z_]\\+\\):\\{1\\}\s\\+\\(\\('\\|"'"'"\\)\\?[-a-zA-Z0-9{}:@]\\+\\('\\|"'"'"\\)\\?\\)/:\1 => \2/g" $file`
+  end
+end
