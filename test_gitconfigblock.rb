@@ -7,9 +7,15 @@ require 'gitconfigblock'
 class TestGitConfigBlock < Test::Unit::TestCase
 
   TestString = <<-END
-[submodule = "rake"]
+[submodule "rake"]
   path = rake
   url = git@bitbucket.org:robinrob/rakefile.git
+END
+
+  MrRobinSmithCom = <<-END
+[submodule "mrrobinsmith.com"]
+  path = mrrobinsmith.com
+  url = git@bitbucket.org:robinrob/mrrobinsmith.com.git
 END
 
 
@@ -58,27 +64,30 @@ END
   end
 
 
-  def test_should_generate_owner_attr
+  def test_should_derive_owner_attr
     lines = TestString
 
     block = GitConfigBlock.new(lines)
 
-    assert_equal('robinrob', block.attrs[:owner])
+    assert_equal('robinrob', block.derived_attrs[:owner])
   end
 
 
   def test_should_convert_block_to_string
     lines = TestString
-    expected = <<-END
-[submodule = "rake"]
-  path = rake
-  url = git@bitbucket.org:robinrob/rakefile.git
-  owner = robinrob
-END
 
     block = GitConfigBlock.new(lines)
 
-    assert_equal(expected, block.to_s)
+    assert_equal(lines, block.to_s)
+  end
+
+
+  def test_should_parse_mrrobinsmith_com_correctly
+    lines = MrRobinSmithCom
+
+    block = GitConfigBlock.new(lines)
+
+    assert_equal(lines, block.to_s)
   end
 
 end

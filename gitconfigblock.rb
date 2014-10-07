@@ -1,7 +1,7 @@
 class GitConfigBlock
   AttributeIndent = 2
 
-  attr_accessor :name, :type, :attrs
+  attr_accessor :name, :type, :attrs, :derived_attrs
 
   def initialize(lines)
     block = read(lines)
@@ -9,6 +9,7 @@ class GitConfigBlock
     @type = block[:type]
     @name = block[:name]
     @attrs = block[:attrs]
+    @derived_attrs = block[:derived_attrs]
   end
 
 
@@ -25,10 +26,11 @@ class GitConfigBlock
   def read(lines)
     block = {}
     block[:attrs] = {}
+    block[:derived_attrs] = {}
 
     lines.each_line.with_index do |line, index|
       if index == 0
-        comps = line.scan(/\w+/)
+        comps = line.scan(/[^\"\s\[\]]+/)
         block[:type] = comps[0]
         block[:name] = comps[1]
 
@@ -37,17 +39,23 @@ class GitConfigBlock
         block[:attrs][key.to_sym] = val
       end
     end
-    unless block[:attrs][:url].nil?
-      block[:attrs][:owner] = parse_owner(block[:attrs][:url])
-    end
+    block = calc_derived_attrs(block)
 
     block
   end
 
 
   def read_attr(line)
-
     {key.to_sym => val}
+  end
+
+
+  def calc_derived_attrs(block)
+    unless block[:attrs][:url].nil?
+      block[:derived_attrs][:owner] = parse_owner(block[:attrs][:url])
+    end
+
+    block
   end
 
 

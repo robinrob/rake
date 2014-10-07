@@ -1,3 +1,6 @@
+$LOAD_PATH << '.'
+$LOAD_PATH << 'rake'
+
 require 'gitconfigblock'
 
 # Reads a file with format of .gitconfig, for example .gitmodules and returns an array of hashes.
