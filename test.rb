@@ -5,8 +5,8 @@ $LOAD_PATH << '.'
 require 'gitconfigeditor'
 
 
-# editor = GitConfigEditor.new('.gitmodules')
-#
-# editor.del_block 'ruby'
-#
-# editor.save
+editor = GitConfigEditor.new('.gitmodules')
+
+editor.del_block 'ruby'
+
+editor.save

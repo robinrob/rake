@@ -2,6 +2,7 @@ $LOAD_PATH << '.'
 
 require 'test/unit'
 require 'gitconfigwriter'
+require 'gitconfigreader'
 require 'gitconfigblock'
 
 
@@ -66,6 +67,17 @@ class TestGitConfigWriter < Test::Unit::TestCase
     GitConfigWriter.new.write(blocks, filename=TestFilename)
 
     assert_equal(Block1, file_contents(TestFilename))
+  end
+
+
+  def test_should_write_10_blocks_into_new_config
+    blocks = GitConfigReader.new.read()
+    blocks = [GitConfigBlock.new(Block1), GitConfigBlock.new(Block2)]
+    expected = [Block1, Block2].join
+
+    GitConfigWriter.new.write(blocks, filename=TestFilename)
+
+    assert_equal(expected, file_contents(TestFilename))
   end
 
 end

@@ -1,0 +1,9 @@
+[submodule "awk"]
+  path = awk
+  url = git@bitbucket.org:robinrob/awk.git
+  branch = master
+ 
+[submodule "ruby"]
+  path = ruby
+  url = git@bitbucket.org:robinrob/ruby.git
+  branch = master  
