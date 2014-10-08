@@ -2,10 +2,10 @@
 
 $LOAD_PATH << '.'
 
-require 'gitconfigeditor'
+require 'gitconfigfile'
 
 
-editor = GitConfigEditor.new('.gitmodules')
+editor = GitConfigFile.new('.gitmodules')
 
 editor.del_block 'ruby'
 

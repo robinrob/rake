@@ -1,9 +1,14 @@
+$LOAD_PATH << '.'
+
 require 'test/unit'
 
-require 'gitconfigeditor'
+require 'gitconfigfile'
+require 'gitconfigblockbuilder'
+require 'wanker'
+require 'exceptions'
 
 
-class TestGitConfigEditor < Test::Unit::TestCase
+class TestGitConfigFile < Test::Unit::TestCase
 
   TestFilename = '.gitconfig_test'
 
@@ -100,51 +105,86 @@ END
   end
 
 
-  def file_contents(filename)
-    File.open(filename, "r") do |infile|
-      contents = ""
-      while (line = infile.gets)
-        contents << line
-      end
-      contents
-    end
+  # def test_should_get_gitconfig_contents_by_default
+  #   expected = "hello Robin"
+  #   filename = '.gitconfig'
+  #   File.open(filename, 'w') {|file| file.write(expected)}
+  #   file = GitConfigFile.new()
+  #
+  #   contents = file.contents
+  #
+  #   assert_equal(expected, contents)
+  #   File.delete(filename)
+  # end
+  #
+  #
+  # def test_should_get_gitsubmodule_contents
+  #   expected = "hello Robin"
+  #   filename = '.gitsubmodules'
+  #   File.open(filename, 'w') {|file| file.write(expected)}
+  #   file = GitConfigFile.new(filename)
+  #
+  #   contents = file.contents
+  #
+  #   assert_equal(expected, contents)
+  #   File.delete(filename)
+  # end
+  #
+  #
+  # def test_should_raise_file_not_found_exception_when_file_does_not_exist
+  #   assert_raises FileNotFoundException do
+  #     GitConfigFile.new
+  #   end
+  # end
+
+
+  def test_should_serialize_1_gitconfigblock
+
+
+    type = 'submodule'
+    name = 'robin'
+    attrs = {:url => 'git@bitbucker.org:robinrob/robin.git', :path => 'robin'}
+    blocks = [GitConfigBlockBuilder.new.with_type(type).with_name(name).with_attrs(attrs).build]
+    Wanker.thefuckout blocks.inspect
+
+    file = GitConfigFile.new(deblocks=blocks)
+    expected = <<-END
+[submodule "robin"]
+  url = git@bitbucker.org:robinrob/robin.git
+  path = robin
+END
+
+    str = file.serialize
+
+    assert_equal(expected, str)
   end
 
-
-  def test_should_get_10_blocks()
-    editor = GitConfigEditor.new(TestFilename)
-
-    blocks = editor.blocks
-
-    assert_equal(10, blocks.length)
-  end
-
-
-  def test_should_get_ruby_submodule_block()
-    editor = GitConfigEditor.new(TestFilename)
-
-    block = editor.get_block 'ruby'
-
-    assert_equal('ruby', block.name)
-  end
-
-
-  def test_should_delete_ruby_submodule_block()
-    editor = GitConfigEditor.new(TestFilename)
-
-    block = editor.del_block 'ruby'
-
-    assert_equal('ruby', block.name)
-  end
-
-
-  def test_should_delete_1_block()
-    editor = GitConfigEditor.new(TestFilename)
-
-    editor.del_block 'ruby'
-
-    assert_equal(9, editor.blocks.length)
-  end
+  #
+  # def test_should_get_ruby_submodule_block()
+  #   editor = GitConfigFile.new(TestFilename)
+  #
+  #   block = editor.get_block 'ruby'
+  #
+  #   assert_equal('ruby', block.name)
+  # end
+  #
+  #
+  # def test_should_delete_ruby_submodule_block()
+  #   editor = GitConfigFile.new(TestFilename)
+  #
+  #   block = editor.del_block 'ruby'
+  #
+  #   assert_equal('ruby', block.name)
+  # end
+  #
+  #
+  # def test_should_delete_1_block()
+  #   editor = GitConfigFile.new(TestFilename)
+  #
+  #   editor.del_block 'ruby'
+  #
+  #   assert_equal(9, editor.blocks.length)
+  # end
 
 
   # def test_should_save_edits_to_file

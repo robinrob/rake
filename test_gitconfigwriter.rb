@@ -30,17 +30,6 @@ class TestGitConfigWriter < Test::Unit::TestCase
   end
 
 
-  def file_contents(filename)
-    File.open(filename, "r") do |infile|
-      contents = ""
-      while (line = infile.gets)
-        contents << line
-      end
-      contents
-    end
-  end
-
-
   def test_should_write_1_block_into_new_config
     blocks = [GitConfigBlock.new(Block1)]
 

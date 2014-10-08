@@ -2,21 +2,14 @@ require 'gitconfigblock'
 
 class GitConfigBlockBuilder
 
-  def initialize
-    @type = nil
-    @name = nil
-    @attrs = nil
-    @derived_attrs = nil
-  end
 
-
-  def withType(type)
+  def with_type(type)
     @type = type
     self
   end
 
 
-  def withName(name)
+  def with_name(name)
     @name = name
     self
   end
@@ -34,13 +27,18 @@ class GitConfigBlockBuilder
   end
 
 
-  def build
-    GitConfigBlock.new({
-                           :type => @type,
-                           :name => @name,
-                           :attrs => @attrs,
-                           :derived_attrs => @derived_attrs
-                       })
+  def build(num=1)
+    block = GitConfigBlock.new({
+                                   :type => @type,
+                                   :name => @name,
+                                   :attrs => @attrs,
+                                   :derived_attrs => @derived_attrs
+                               })
+    if num > 1
+      [block] * num
+    else
+      block
+    end
   end
 
 end
