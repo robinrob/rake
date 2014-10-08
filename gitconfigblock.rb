@@ -3,6 +3,15 @@ class GitConfigBlock
 
   attr_accessor :name, :type, :attrs, :derived_attrs
 
+
+  def initialize(hash)
+    @type = hash[:type]
+    @name = hash[:name]
+    @attrs = hash[:attrs]
+    @derived_attrs = hash[:derived_attrs]
+  end
+
+
   def initialize(lines)
     block = read(lines)
 
