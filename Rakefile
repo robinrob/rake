@@ -23,7 +23,7 @@ end
 
 task :clean do
   system("find . -name '*~' -delete")
-  # Artifacts from git merge  
+  # Mess created by git merge
   system("find . -name '*.orig' -delete")
   system("find . -name '*.BACKUP*' -delete")
   system("find . -name '*.BASE*' -delete")

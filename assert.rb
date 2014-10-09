@@ -4,11 +4,15 @@ require 'differ'
 
 module Assert
 
-  def self.equal_strings(str1, str2)
-    if str1 != str2
-      Console.thefuckout "\n" << Differ.diff_by_line(str1, str2).to_s.yellow
+  def self.equal_strings(expected, actual)
+    if expected != actual
+      Console.thefuckout "Should be:".light_red
+      Console.thefuckout expected.green
+      Console.thefuckout "Actually:".light_red
+      Console.thefuckout actual.yellow
+      Console.thefuckout "Diff:".light_red
+      Console.thefuckout "\n" << Differ.diff_by_line(actual, expected).to_s.light_red
     end
-    # assert_equal(str1, str2)
   end
 
 

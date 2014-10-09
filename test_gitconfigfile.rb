@@ -179,9 +179,10 @@ END
   def test_should_get_ruby_submodule_block()
     file = GitConfigFile.new(:filename => TestFilename)
     expected = <<-END
-[submodule "robin"]
-  url = git@bitbucker.org:robinrob/robin.git
-  path = robin
+[submodule "ruby"]
+  path = ruby
+  url = git@bitbucket.org:robinrob/ruby.git
+  branch = master
 END
 
     block = file.get_block 'ruby'
@@ -191,31 +192,32 @@ END
   end
 
 
-  # def test_should_delete_ruby_submodule_block()
-  #   editor = GitConfigFile.new(TestFilename)
-  #
-  #   block = editor.del_block 'ruby'
-  #
-  #   assert_equal('ruby', block.name)
-  # end
-  #
-  #
-  # def test_should_delete_1_block()
-  #   editor = GitConfigFile.new(TestFilename)
-  #
-  #   editor.del_block 'ruby'
-  #
-  #   assert_equal(9, editor.blocks.length)
-  # end
+  def test_should_delete_ruby_submodule_block()
+    file = GitConfigFile.new(:filename => TestFilename)
+
+    block = file.del_block 'ruby'
+
+    assert_equal('ruby', block.name)
+  end
 
 
-  # def test_should_save_edits_to_file
-  #   editor = GitConfigEditor.new(TestFilename)
-  #   editor.del_block 'ruby'
-  #
-  #   editor.save
-  #
-  #   assert_equal(EditedContents, file_contents(TestFilename))
-  # end
+  def test_should_delete_1_block()
+    file = GitConfigFile.new(:filename => TestFilename)
+  
+    file.del_block 'ruby'
+
+    assert_equal(9, file.blocks.length)
+  end
+
+
+  def test_should_save_edits_to_file
+    file = GitConfigFile.new(:filename => TestFilename)
+    file.del_block 'ruby'
+    expected = EditedContents
+
+    file.save
+
+    Assert.equal_strings(expected, file.contents)
+  end
 
 end
