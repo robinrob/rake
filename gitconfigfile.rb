@@ -2,15 +2,15 @@ require 'assert'
 
 require 'gitconfigreader'
 require 'gitconfigwriter'
-require 'wanker'
 
 class GitConfigFile
 
   attr_accessor :blocks
 
 
-  def initialize(filename='.gitconfig', deblocks=nil)
-    Wanker.thefuckout "WANKER!!!!" if deblocks.nil?
+  def initialize(options={})
+    filename = options[:filename] || '.gitconfig'
+    blocks = options[:blocks] || nil
 
     @filename = filename
 

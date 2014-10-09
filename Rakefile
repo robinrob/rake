@@ -33,10 +33,11 @@ task :clean do
 end
 
 
-task :test do
+task :test, [:test_files] do |t, args|
+  test_files = args[:test_files] || 'test*.rb'
   Rake::TestTask.new do |t|
     t.libs << "."
-    t.test_files = FileList['test*.rb']
+    t.test_files = FileList[test_files]
     t.verbose = true
   end
 end
@@ -72,6 +73,7 @@ end
 task :count_all do
   count(["*.awk", "*.c", "*.cpp", "*.css", "*.html", "*.java", "*.js", "*.php", "*.pl", "*.py", "*.rb", "*.sh", "*.zsh"])
 end
+
 
 task :commit, [:msg] do |t, args|
   Rake::Task["clean"].execute()

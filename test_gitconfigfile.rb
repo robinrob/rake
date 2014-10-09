@@ -4,7 +4,8 @@ require 'test/unit'
 
 require 'gitconfigfile'
 require 'gitconfigblockbuilder'
-require 'wanker'
+require 'differ'
+require 'console'
 require 'exceptions'
 
 
@@ -105,49 +106,45 @@ END
   end
 
 
-  # def test_should_get_gitconfig_contents_by_default
-  #   expected = "hello Robin"
-  #   filename = '.gitconfig'
-  #   File.open(filename, 'w') {|file| file.write(expected)}
-  #   file = GitConfigFile.new()
-  #
-  #   contents = file.contents
-  #
-  #   assert_equal(expected, contents)
-  #   File.delete(filename)
-  # end
-  #
-  #
-  # def test_should_get_gitsubmodule_contents
-  #   expected = "hello Robin"
-  #   filename = '.gitsubmodules'
-  #   File.open(filename, 'w') {|file| file.write(expected)}
-  #   file = GitConfigFile.new(filename)
-  #
-  #   contents = file.contents
-  #
-  #   assert_equal(expected, contents)
-  #   File.delete(filename)
-  # end
-  #
-  #
-  # def test_should_raise_file_not_found_exception_when_file_does_not_exist
-  #   assert_raises FileNotFoundException do
-  #     GitConfigFile.new
-  #   end
-  # end
+  def test_should_get_gitconfig_contents_by_default
+    expected = "hello Robin"
+    filename = '.gitconfig'
+    File.open(filename, 'w') {|file| file.write(expected)}
+    file = GitConfigFile.new
+
+    contents = file.contents
+
+    assert_equal(expected, contents)
+    File.delete(filename)
+  end
+
+
+  def test_should_get_gitsubmodule_contents
+    expected = "hello Robin"
+    filename = '.gitsubmodules'
+    File.open(filename, 'w') {|file| file.write(expected)}
+    file = GitConfigFile.new(:filename => filename)
+
+    contents = file.contents
+
+    assert_equal(expected, contents)
+    File.delete(filename)
+  end
+
+
+  def test_should_raise_file_not_found_exception_when_file_does_not_exist
+    assert_raises FileNotFoundException do
+      GitConfigFile.new
+    end
+  end
 
 
   def test_should_serialize_1_gitconfigblock
-
-
     type = 'submodule'
     name = 'robin'
     attrs = {:url => 'git@bitbucker.org:robinrob/robin.git', :path => 'robin'}
     blocks = [GitConfigBlockBuilder.new.with_type(type).with_name(name).with_attrs(attrs).build]
-    Wanker.thefuckout blocks.inspect
-
-    file = GitConfigFile.new(deblocks=blocks)
+    file = GitConfigFile.new(:blocks => blocks)
     expected = <<-END
 [submodule "robin"]
   url = git@bitbucker.org:robinrob/robin.git
@@ -159,16 +156,41 @@ END
     assert_equal(expected, str)
   end
 
-  #
-  # def test_should_get_ruby_submodule_block()
-  #   editor = GitConfigFile.new(TestFilename)
-  #
-  #   block = editor.get_block 'ruby'
-  #
-  #   assert_equal('ruby', block.name)
-  # end
-  #
-  #
+
+  def test_should_serialize_10_gitconfigblocks
+    type = 'submodule'
+    name = 'robin'
+    attrs = {:url => 'git@bitbucker.org:robinrob/robin.git', :path => 'robin'}
+    blocks = [GitConfigBlockBuilder.new.with_type(type).with_name(name).with_attrs(attrs).build] * 10
+    file = GitConfigFile.new(:blocks => blocks)
+    expected = <<-END
+[submodule "robin"]
+  url = git@bitbucker.org:robinrob/robin.git
+  path = robin
+END
+    expected = ([expected] * 10).join
+
+    str = file.serialize
+
+    assert_equal(expected, str)
+  end
+
+
+  def test_should_get_ruby_submodule_block()
+    file = GitConfigFile.new(:filename => TestFilename)
+    expected = <<-END
+[submodule "robin"]
+  url = git@bitbucker.org:robinrob/robin.git
+  path = robin
+END
+
+    block = file.get_block 'ruby'
+
+    # Console.diff expected, block.to_s
+    Assert.equal_strings(expected, block.to_s)
+  end
+
+
   # def test_should_delete_ruby_submodule_block()
   #   editor = GitConfigFile.new(TestFilename)
   #
