@@ -22,9 +22,17 @@ class TestGitConfigFile < Test::Unit::TestCase
   path = c
   url = git@bitbucket.org:robinrob/c.git
   branch = master
+[submodule "c-plus-plus"]
+  path = c-plus-plus
+  url = git@bitbucket.org:robinrob/c-plus-plus.git
+  branch = master
 [submodule "force.com"]
   path = force.com
   url = git@bitbucket.org:robinrob/force.com.git
+  branch = master
+[submodule "html-css"]
+  path = html-css
+  url = git@bitbucket.org:robinrob/html-css.git
   branch = master
 [submodule "java"]
   path = java
@@ -54,9 +62,17 @@ END
   path = c
   url = git@bitbucket.org:robinrob/c.git
   branch = master
+[submodule "c-plus-plus"]
+  path = c-plus-plus
+  url = git@bitbucket.org:robinrob/c-plus-plus.git
+  branch = master
 [submodule "force.com"]
   path = force.com
   url = git@bitbucket.org:robinrob/force.com.git
+  branch = master
+[submodule "html-css"]
+  path = html-css
+  url = git@bitbucket.org:robinrob/html-css.git
   branch = master
 [submodule "ruby"]
   path = ruby
