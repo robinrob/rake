@@ -1,7 +1,5 @@
 require 'assert'
-
 require 'gitconfigreader'
-require 'gitconfigwriter'
 
 class GitConfigFile
 

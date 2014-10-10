@@ -65,11 +65,6 @@ class GitConfigBlock
   end
 
 
-  def read_attr(line)
-    {key.to_sym => val}
-  end
-
-
   def calc_derived_attrs(block)
     unless block[:attrs][:url].nil?
       block[:derived_attrs][:owner] = parse_owner(block[:attrs][:url])
