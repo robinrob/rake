@@ -4,8 +4,7 @@ $LOAD_PATH << 'rake'
 require 'csv'
 require 'colorize'
 require 'subdoer'
-require 'gitconfigreader'
-require 'gitconfigwriter'
+require 'gitconfigfile'
 require 'rake/testtask'
 
 
@@ -157,17 +156,9 @@ task :sub_deinit, [:arg1] do |t, args|
   `git rm -rf --ignore-unmatch --cached #{submodule}`
   `git submodule deinit #{submodule} 2> /dev/null`
 
-  # repos = GitConfigReader.new.read(filename='.gitmodules')
-  # repo = repos.find { |repo| repo.name == submodule }
-  #
-  # # hash = Hash[repos.map.with_index.to_a]
-  # # index = hash[repo]
-  #
-  # bollocks = repos.delete_at(repos.index(repo))
-  # puts bollocks
-  #
-  # # `rm .gitmodules`
-  # GitConfigWriter.new.write(repos, filename='.gitmodules')
+  file = GitConfigFile.new(:filename => '.gitmodules')
+  file.del_block submodule
+  file.save
 end
 
 
