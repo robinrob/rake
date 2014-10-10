@@ -361,33 +361,4 @@ END
     assert(Assert.equal_strings(EditedContents, file.contents))
   end
 
-
-  # def test_should_delete_ruby_submodule_block()
-  #   file = GitConfigFile.new(:filename => TestFilename)
-  #
-  #   block = file.del_block 'ruby'
-  #
-  #   assert_equal('ruby', block.name)
-  # end
-  #
-  #
-  # def test_should_delete_1_block()
-  #   file = GitConfigFile.new(:filename => TestFilename)
-  #
-  #   file.del_block 'ruby'
-  #
-  #   assert_equal(9, file.blocks.length)
-  # end
-  #
-  #
-  # def test_should_save_edits_to_file
-  #   file = GitConfigFile.new(:filename => TestFilename)
-  #   file.del_block 'ruby'
-  #   expected = EditedContents
-  #
-  #   file.save
-  #
-  #   Assert.equal_strings(expected, file.contents)
-  # end
-
 end

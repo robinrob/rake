@@ -38,7 +38,7 @@ class GitConfigFile
 
 
   def save
-    File.open(@filename, File::WRONLY | File::CREAT) do |file|
+    File.open(@filename, "w") do |file|
       file.write(serialize)
     end
   end
@@ -51,13 +51,6 @@ class GitConfigFile
         contents << line
       end
       contents
-    end
-  end
-
-
-  def contents=(contents)
-    File.open(filename, File::WRONLY | File::CREAT) do |file|
-      file.write(contents)
     end
   end
 

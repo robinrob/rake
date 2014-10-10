@@ -36,10 +36,10 @@ class SubDoer
       puts "#{indent}Recursing into #{repo} ...".light_cyan
 
       GitConfigReader.new.read(".gitmodules").each do |submodule|
-        if submodule.attrs[:owner] == Me
+        if submodule.derived_attrs[:owner] == Me
           _each_sub(submodule.attrs[:path], command, config)
         else
-          puts "#{arrow} #{repo_owner(submodule.attrs[:owner], submodule.attrs[:path])} #{not_me}"
+          puts "#{arrow} #{repo_owner(submodule.derived_attrs[:owner], submodule.attrs[:path])} #{not_me}"
         end
       end
 
