@@ -16,39 +16,39 @@ class TestGitConfigReader < Test::Unit::TestCase
   path = awk
   url = git@bitbucket.org:robinrob/awk.git
   branch = master
-  [submodule "c"]
+[submodule "c"]
   path = c
   url = git@bitbucket.org:robinrob/c.git
   branch = master
-  [submodule "c-plus-plus"]
+[submodule "c-plus-plus"]
   path = c-plus-plus
   url = git@bitbucket.org:robinrob/c-plus-plus.git
   branch = master
-  [submodule "force.com"]
+[submodule "force.com"]
   path = force.com
   url = git@bitbucket.org:robinrob/force.com.git
   branch = master
-  [submodule "html-css"]
+[submodule "html-css"]
   path = html-css
   url = git@bitbucket.org:robinrob/html-css.git
   branch = master
-  [submodule "java"]
+[submodule "java"]
   path = java
   url = git@bitbucket.org:robinrob/java.git
   branch = master
-  [submodule "javascript"]
+[submodule "javascript"]
   path = javascript
   url = git@bitbucket.org:robinrob/javascript.git
   branch = master
-  [submodule "perl"]
+[submodule "perl"]
   path = perl
   url = git@bitbucket.org:robinrob/perl.git
   branch = master
-  [submodule "python"]
+[submodule "python"]
   path = python
   url = git@bitbucket.org:robinrob/python.git
   branch = master
-  [submodule "ruby"]
+[submodule "ruby"]
   path = ruby
   url = git@bitbucket.org:robinrob/ruby.git
   branch = master

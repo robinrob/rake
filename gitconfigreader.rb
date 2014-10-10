@@ -8,7 +8,7 @@ require 'gitconfigblock'
 class GitConfigReader
 
   def read(filename='.gitconfig')
-    text = `cat #{filename}`
+    text = File.read(filename)
     text.strip!
 
     blocks = []

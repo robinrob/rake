@@ -27,6 +27,21 @@ class GitConfigBlock
   end
 
 
+  def eql?(other)
+    true if diff(other) == nil
+  end
+
+
+  def diff(other)
+    diff = nil
+    diff = :type unless self.type == other.type
+    diff = :name unless self.name == other.name
+    diff = :attrs unless self.attrs == other.attrs
+    diff = :derived_attrs unless self.derived_attrs == other.derived_attrs
+    diff
+  end
+
+
   private
   def read(lines)
     block = {}

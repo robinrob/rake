@@ -18,10 +18,6 @@
   path = html-css
   url = git@bitbucket.org:robinrob/html-css.git
   branch = master
-[submodule "ruby"]
-  path = ruby
-  url = git@bitbucket.org:robinrob/ruby.git
-  branch = master
 [submodule "java"]
   path = java
   url = git@bitbucket.org:robinrob/java.git

@@ -2,6 +2,7 @@ $LOAD_PATH << '.'
 
 require 'test/unit'
 require 'gitconfigblock'
+require 'gitconfigblockbuilder'
 
 
 class TestGitConfigBlock < Test::Unit::TestCase
@@ -88,6 +89,87 @@ END
     block = GitConfigBlock.new(lines)
 
     assert_equal(lines, block.to_s)
+  end
+
+
+  def test_should_be_equal_to_other_block
+    attrs = {:attr1 => 'attr1', :attr2 => 'attr2'}
+    derived_attrs = {:attr1 => 'derived_attr1', :attr2 => 'derived_attr2'}
+    block1 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+    block2 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+
+    are_equal = block1.eql? block2
+
+    assert(are_equal)
+  end
+
+
+  def test_should_not_be_equal_to_other_block
+    attrs = {:attr1 => 'attr1', :attr2 => 'attr2'}
+    derived_attrs1 = {:attr1 => 'derived_attr1', :attr2 => 'derived_attr2'}
+    derived_attrs2 = {:attr1 => 'derived_attr1', :attr2 => 'derived_attr3'}
+    block1 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs1).
+        build
+    block2 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs2).
+        build
+
+    are_equal = block1.eql? block2
+
+    assert(!are_equal)
+  end
+
+
+  def test_should_differ_by_type
+    attrs = {:attr1 => 'attr1', :attr2 => 'attr2'}
+    derived_attrs = {:attr1 => 'derived_attr1', :attr2 => 'derived_attr2'}
+    block1 = GitConfigBlockBuilder.new.with_type('type1').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+    block2 = GitConfigBlockBuilder.new.with_type('type2').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+
+    diff = block1.diff block2
+
+    assert_equal(:type, diff)
+  end
+
+
+  def test_should_not_differ
+    attrs = {:attr1 => 'attr1', :attr2 => 'attr2'}
+    derived_attrs = {:attr1 => 'derived_attr1', :attr2 => 'derived_attr2'}
+    block1 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+    block2 = GitConfigBlockBuilder.new.with_type('type').
+        with_name('name').
+        with_attrs(attrs).
+        with_derived_attrs(derived_attrs).
+        build
+
+    diff = block1.diff block2
+
+    assert_equal(nil, diff)
   end
 
 end
