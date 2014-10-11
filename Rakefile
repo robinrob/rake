@@ -225,4 +225,6 @@ end
 
 task :sub_sort do
   GitConfigFile.new(:filename => '.gitmodules').sort!.save
+  puts "Sorted file .gitmodules file:".green
+  puts `cat .gitmodules`.yellow
 end
