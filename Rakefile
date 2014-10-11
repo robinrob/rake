@@ -1,5 +1,7 @@
 $LOAD_PATH << '.'
+$LOAD_PATH << 'lib'
 $LOAD_PATH << 'rake'
+$LOAD_PATH << 'rake/lib'
 
 require 'csv'
 require 'colorize'
@@ -225,6 +227,6 @@ end
 
 task :sub_sort do
   GitConfigFile.new(:filename => '.gitmodules').sort!.save
-  puts "Sorted file .gitmodules file:".green
+  puts "Sorted .gitmodules file:".green
   puts `cat .gitmodules`.strip.yellow
 end
