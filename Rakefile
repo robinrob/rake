@@ -158,6 +158,7 @@ task :sub_deinit, [:arg1] do |t, args|
 
   file = GitConfigFile.new(:filename => '.gitmodules')
   file.del_block submodule
+  file.sort!
   file.save
 end
 
@@ -209,6 +210,7 @@ task :deploy do
   system("heroku run rake db:migrate")
 end
 
+
 # Convert new ruby hash syntax into normal syntax
 task :hashes do
   cmd = "gfind . -iregex '.*\\(rb\\|haml\\)' -printf '%p\n'"
@@ -218,4 +220,9 @@ task :hashes do
     puts "Converting file: ".green << "#{file}".yellow
     `gsed -i "s/\\([a-z_]\\+\\):\\{1\\}\s\\+\\(\\('\\|"'"'"\\)\\?[-a-zA-Z0-9{}:@]\\+\\('\\|"'"'"\\)\\?\\)/:\\1 => \\2/g" #{file}`
   end
+end
+
+
+task :sub_sort do
+  GitConfigFile.new(:filename => '.gitmodules').sort!.save
 end

@@ -1,5 +1,6 @@
 require 'assert'
 require 'gitconfigreader'
+require 'gitconfigblockcollection'
 
 class GitConfigFile
 
@@ -60,6 +61,17 @@ class GitConfigFile
 
   def del_block(block_name)
     @blocks.delete(get_block(block_name))
+  end
+
+
+  def blocks
+    GitConfigBlockCollection.new(@blocks)
+  end
+
+
+  def sort!
+    @blocks = blocks.sort!.blocks
+    self
   end
 
 end

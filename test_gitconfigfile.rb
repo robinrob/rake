@@ -18,10 +18,6 @@ class TestGitConfigFile < Test::Unit::TestCase
   path = awk
   url = git@bitbucket.org:robinrob/awk.git
   branch = master
-[submodule "c"]
-  path = c
-  url = git@bitbucket.org:robinrob/c.git
-  branch = master
 [submodule "c-plus-plus"]
   path = c-plus-plus
   url = git@bitbucket.org:robinrob/c-plus-plus.git
@@ -50,6 +46,10 @@ class TestGitConfigFile < Test::Unit::TestCase
   path = perl
   url = git@bitbucket.org:robinrob/perl.git
   branch = master
+[submodule "c"]
+  path = c
+  url = git@bitbucket.org:robinrob/c.git
+  branch = master
 [submodule "python"]
   path = python
   url = git@bitbucket.org:robinrob/python.git
@@ -60,10 +60,6 @@ END
 [submodule "awk"]
   path = awk
   url = git@bitbucket.org:robinrob/awk.git
-  branch = master
-[submodule "c"]
-  path = c
-  url = git@bitbucket.org:robinrob/c.git
   branch = master
 [submodule "c-plus-plus"]
   path = c-plus-plus
@@ -88,6 +84,10 @@ END
 [submodule "perl"]
   path = perl
   url = git@bitbucket.org:robinrob/perl.git
+  branch = master
+[submodule "c"]
+  path = c
+  url = git@bitbucket.org:robinrob/c.git
   branch = master
 [submodule "python"]
   path = python
@@ -359,6 +359,16 @@ END
     file = GitConfigFile.new; file.del_block 'ruby'; file.save
 
     assert(Assert.equal_strings(EditedContents, file.contents))
+  end
+
+
+  def test_should_sort_alphabetically
+    File.open('.gitconfig', 'w') {|file| file.write(GitSubmoduleContents)}
+    file = GitConfigFile.new
+
+    file.sort!
+
+    assert_equal('c', file.blocks[1].name)
   end
 
 end

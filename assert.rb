@@ -25,7 +25,7 @@ module Assert
     equal = true
     if (diff) != nil
       equal = false
-      Console.show_diff diff
+      Console.show_diff expected, actual, diff
     end
     equal
   end

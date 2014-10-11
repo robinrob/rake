@@ -21,12 +21,12 @@ module Console
   end
 
 
-  def self.show_diff(obj1, obj2, diff)
+  def self.show_diff(expected, actual, diff)
     Console.thefuckout "Should be:".light_red
-    Console.thefuckout obj1.inspect.green
+    Console.thefuckout expected.inspect.green
 
     Console.thefuckout "Actually:".light_red
-    Console.thefuckout obj2.inspect.yellow
+    Console.thefuckout actual.inspect.yellow
 
     Console.thefuckout "Diff:".light_red
     Console.thefuckout diff.to_s.light_red
