@@ -28,7 +28,7 @@ class GitConfigBlock
 
 
   def eql?(other)
-    true if diff(other) == nil
+    diff(other) == nil
   end
 
 
