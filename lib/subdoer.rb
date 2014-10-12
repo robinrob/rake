@@ -34,7 +34,6 @@ class SubDoer
       repo.submodules.each do |submodule|
         each_sub(submodule, command, config)
       end
-
     end
 
     unless config[:recurse_down]
