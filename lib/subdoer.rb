@@ -18,34 +18,21 @@ class SubDoer
   end
 
 
-  public
-  def each_sub(command, config={})
-    _each_sub(GitRepo.new({
-                              :name => 'root',
-                              :path => './',
-                              :owner => 'robinrob'}
-              ), command, config)
-  end
-
-
-  private
-  def _each_sub(repo, command, config={})
+  def each_sub(repo, command, config={})
     @counter += 1
     parent_dir = Dir.pwd
     Dir.chdir("#{repo.path}")
-
-    repo = fill_submodules(repo)
 
     nest
     if config[:recurse_down]
       do_repo(repo, command, config)
     end
 
-    if !config[:not_recursive] && (repo.submodules.length > 0)
+    if (config[:not_recursive] == nil) && (repo.submodules.length > 0)
       puts "#{indent}Recursing into #{repo.path} ...".light_cyan
 
       repo.submodules.each do |submodule|
-        _each_sub(submodule, command, config)
+        each_sub(submodule, command, config)
       end
 
     end
@@ -57,21 +44,7 @@ class SubDoer
   end
 
 
-  def fill_submodules(repo)
-    if File.exists? '.gitmodules'
-      blocks = GitConfigReader.new.read '.gitmodules'
-      blocks.each do |block|
-        repo.add_sub GitRepo.new({
-                                     :name => block.name,
-                                     :path => block.attrs[:path],
-                                     :owner => block.derived_attrs[:owner]
-                                 })
-      end
-    end
-    repo
-  end
-
-
+  private
   def do_repo(repo, command, config)
     puts "#{arrow} #{entering_repo(repo.path)}"
 

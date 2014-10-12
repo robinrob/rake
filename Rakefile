@@ -5,7 +5,7 @@ $LOAD_PATH << 'rake/lib'
 
 require 'csv'
 require 'colorize'
-require 'subdoer'
+require 'gitrepo'
 require 'gitconfigfile'
 require 'rake/testtask'
 
@@ -171,17 +171,15 @@ task :each_sub, [:command, :quiet, :recurse_down] do |t, args|
   recurse_down = args[:recurse_down].nil? ? false : true
 
   config = { :quiet => quiet, :recurse_down => recurse_down}
-
-  doer = SubDoer.new()
   
   unless command.nil?
     puts "Quiet mode!".light_blue if quiet
 
-    doer.each_sub(command, config)
+    result = GitRepo.new(:name => 'root', :path => './').each_sub(command, config)
   end
 
-  puts "Ran for ".green << "#{doer.counter}".yellow << " repositories.".green \
-  << " Max nesting: ".green << "#{doer.max_nesting}".yellow << ".".green
+  puts "Ran for ".green << "#{result[:counter]}".yellow << " repositories.".green \
+  << " Max nesting: ".green << "#{result[:max_nesting]}".yellow << ".".green
 end
 
 
