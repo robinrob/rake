@@ -1,3 +1,6 @@
+require 'GitConfigReader'
+require 'GitRepo'
+
 class SubDoer
 
   Indentation = "\t\t|"
@@ -17,7 +20,11 @@ class SubDoer
 
   public
   def each_sub(command, config={})
-    _each_sub('./', command, config)
+    _each_sub(GitRepo.new({
+                              :name => 'root',
+                              :path => './',
+                              :owner => 'robinrob'}
+              ), command, config)
   end
 
 
@@ -25,22 +32,20 @@ class SubDoer
   def _each_sub(repo, command, config={})
     @counter += 1
     parent_dir = Dir.pwd
-    Dir.chdir("#{repo.strip}")
+    Dir.chdir("#{repo.path}")
+
+    repo = fill_submodules(repo)
 
     nest
     if config[:recurse_down]
       do_repo(repo, command, config)
     end
 
-    if !config[:not_recursive] && File.exists?(".gitmodules")
-      puts "#{indent}Recursing into #{repo} ...".light_cyan
+    if !config[:not_recursive] && (repo.submodules.length > 0)
+      puts "#{indent}Recursing into #{repo.path} ...".light_cyan
 
-      GitConfigReader.new.read(".gitmodules").each do |submodule|
-        if submodule.derived_attrs[:owner] != Me
-          puts "#{arrow} #{repo_owner(submodule.derived_attrs[:owner], submodule.attrs[:path])} #{not_me}'"
-        else
-         _each_sub(submodule.attrs[:path], command, config)
-        end
+      repo.submodules.each do |submodule|
+        _each_sub(submodule, command, config)
       end
 
     end
@@ -52,14 +57,33 @@ class SubDoer
   end
 
 
-  def do_repo(repo, command, config)
-    puts "#{arrow} #{entering_repo(repo)}"
+  def fill_submodules(repo)
+    if File.exists? '.gitmodules'
+      blocks = GitConfigReader.new.read '.gitmodules'
+      blocks.each do |block|
+        repo.add_sub GitRepo.new({
+                                     :name => block.name,
+                                     :path => block.attrs[:path],
+                                     :owner => block.derived_attrs[:owner]
+                                 })
+      end
+    end
+    repo
+  end
 
-    command = "sh -c #{command}"
-    if config[:quiet]
-      `#{command}`
+
+  def do_repo(repo, command, config)
+    puts "#{arrow} #{entering_repo(repo.path)}"
+
+    if repo.owner == Me
+      if config[:quiet]
+        `#{command}`
+      else
+        system("#{command}")
+      end
+
     else
-      system("#{command}")
+      puts "#{indent}#{repo_owner(repo.owner, repo.path)} #{not_me}'"
     end
   end
 
