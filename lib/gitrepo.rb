@@ -13,11 +13,6 @@ class GitRepo
   end
 
 
-  def add_sub(sub)
-    @submodules << sub
-  end
-
-
   def each_sub(command, config={})
     doer = SubDoer.new
     doer.each_sub(self, command, config)
@@ -45,4 +40,8 @@ class GitRepo
     end
   end
 
+
+  def add_sub(sub)
+    @submodules << sub
+  end
 end

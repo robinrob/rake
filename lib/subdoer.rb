@@ -55,7 +55,7 @@ class SubDoer
       end
 
     else
-      puts "#{indent}#{repo_owner(repo.owner, repo.path)} #{not_me}'"
+      puts "#{indent.cyan}#{repo_owner(repo.owner, repo.path)} #{not_me}'"
     end
   end
 
