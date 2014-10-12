@@ -2,6 +2,8 @@ require 'subdoer'
 
 class GitRepo
 
+  Me = 'robinrob'
+
   attr_accessor :name, :submodules, :owner, :path
 
   def initialize(config)
@@ -9,7 +11,7 @@ class GitRepo
     @path = config[:path]
     @submodules = []
     fill_submodules
-    @owner = config[:owner] || 'robinrob'
+    @owner = config[:owner] || Me
   end
 
 

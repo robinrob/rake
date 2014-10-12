@@ -14,7 +14,6 @@ class SubDoer
     @depth = 0
     @max_nesting = @depth
     @counter = 0
-    @path = ''
   end
 
 
