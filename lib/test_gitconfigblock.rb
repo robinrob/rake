@@ -19,6 +19,32 @@ END
   url = git@bitbucket.org:robinrob/mrrobinsmith.com.git
 END
 
+  GithubUrl = <<-END
+[submodule "mrrobinsmith.com"]
+  path = mrrobinsmith.com
+  url = git@github.com:robinrob/mrrobinsmith.com.git
+END
+
+  GithubHttpsUrl = <<-END
+[submodule "mrrobinsmith.com"]
+  path = mrrobinsmith.com
+  url = https://github.com:robinrob/mrrobinsmith.com.git
+END
+
+  BitbucketHttpsUrl = <<-END
+[submodule "mrrobinsmith.com"]
+  path = mrrobinsmith.com
+  url = https://bitbucket.org:robinrob/mrrobinsmith.com.git
+END
+
+
+  PreztoUrl = <<-END
+[submodule "mrrobinsmith.com"]
+  path = mrrobinsmith.com
+  url = https://github.com/sorin-ionescu/prezto.git
+END
+
+
 
   def test_should_read_block
     lines = TestString
@@ -65,12 +91,48 @@ END
   end
 
 
-  def test_should_derive_owner_attr
+  def test_should_derive_owner_of_bitbucket_repo
     lines = TestString
 
     block = GitConfigBlock.new(lines)
 
     assert_equal('robinrob', block.derived_attrs[:owner])
+  end
+
+
+  def test_should_derive_owner_of_https_bitbucket_repo
+    lines = BitbucketHttpsUrl
+
+    block = GitConfigBlock.new(lines)
+
+    assert_equal('robinrob', block.derived_attrs[:owner])
+  end
+
+
+  def test_should_derive_owner_of_github_repo
+    lines = GithubUrl
+
+    block = GitConfigBlock.new(lines)
+
+    assert_equal('robinrob', block.derived_attrs[:owner])
+  end
+
+
+  def test_should_derive_owner_of_https_github_repo
+    lines = GithubHttpsUrl
+
+    block = GitConfigBlock.new(lines)
+
+    assert_equal('robinrob', block.derived_attrs[:owner])
+  end
+
+
+  def test_should_derive_owner_of_prezto_url
+    lines = PreztoUrl
+
+    block = GitConfigBlock.new(lines)
+
+    assert_equal('sorin-ionescu', block.derived_attrs[:owner])
   end
 
 

@@ -29,32 +29,38 @@ class SubDoer
 
     nest
     if config[:recurse_down]
-      do_repo(repo, command)
+      do_repo(repo, command, config)
     end
 
-    if config[:recursive] && File.exists?(".gitmodules")
+    if !config[:not_recursive] && File.exists?(".gitmodules")
       puts "#{indent}Recursing into #{repo} ...".light_cyan
 
       GitConfigReader.new.read(".gitmodules").each do |submodule|
-        if submodule.derived_attrs[:owner] == Me
-          _each_sub(submodule.attrs[:path], command, config)
+        if submodule.derived_attrs[:owner] != Me
+          puts "#{arrow} #{repo_owner(submodule.derived_attrs[:owner], submodule.attrs[:path])} #{not_me}'"
         else
-          puts "#{arrow} #{repo_owner(submodule.derived_attrs[:owner], submodule.attrs[:path])} #{not_me}"
+         _each_sub(submodule.attrs[:path], command, config)
         end
       end
 
     end
 
     unless config[:recurse_down]
-      do_repo(repo, command)
+      do_repo(repo, command, config)
     end
     denest_to(parent_dir)
   end
 
 
-  def do_repo(repo, command)
+  def do_repo(repo, command, config)
     puts "#{arrow} #{entering_repo(repo)}"
-    `#{command}`
+
+    command = "sh -c #{command}"
+    if config[:quiet]
+      `#{command}`
+    else
+      system("#{command}")
+    end
   end
 
 

@@ -75,6 +75,6 @@ class GitConfigBlock
 
 
   def parse_owner(repo_url)
-    repo_url.scan(/(?:bitbucket.org|github.com)(?::|\/)(\w+)\/.*/)[0][0]
+    repo_url.scan(/(?:bitbucket.org|github.com)(?::|\/)([\S]+)\/.*/)[0][0]
   end
 end

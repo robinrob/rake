@@ -165,17 +165,17 @@ task :sub_deinit, [:arg1] do |t, args|
 end
 
 
-task :each_sub, [:command, :recurse_down, :recursive] do |t, args|
+task :each_sub, [:command, :quiet, :recurse_down] do |t, args|
   command = args[:command]
+  quiet = args[:quiet] || false
   recurse_down = args[:recurse_down].nil? ? false : true
-  recursive = args[:recursive].nil? ? true : false
 
-  config = { :recursive => true, :recurse_down => recurse_down}
+  config = { :quiet => quiet, :recurse_down => recurse_down}
 
   doer = SubDoer.new()
   
   unless command.nil?
-    puts "Recursive mode!".light_blue if recursive
+    puts "Quiet mode!".light_blue if quiet
 
     doer.each_sub(command, config)
   end
