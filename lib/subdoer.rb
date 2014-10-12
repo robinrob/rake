@@ -1,6 +1,3 @@
-require 'GitConfigReader'
-require 'GitRepo'
-
 class SubDoer
 
   Indentation = "\t\t|"
