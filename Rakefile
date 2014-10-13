@@ -223,7 +223,7 @@ task :hashes do
 end
 
 
-task :sub_sort do
+task :sort_sub do
   GitConfigFile.new(:filename => '.gitmodules').sort!.save
   puts "Sorted .gitmodules file:".green
   puts `cat .gitmodules`.strip.yellow
