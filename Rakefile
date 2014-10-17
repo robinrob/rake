@@ -231,5 +231,5 @@ end
 
 
 task :run do
-  system("cocos run -p web")
+  system("cocos run -p web -b '#{ENV['BROWSER']}'")
 end
