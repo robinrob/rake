@@ -228,3 +228,8 @@ task :sort_sub do
   puts "Sorted .gitmodules file:".green
   puts `cat .gitmodules`.strip.yellow
 end
+
+
+task :run do
+  system("cocos run -p web")
+end
