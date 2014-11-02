@@ -1,6 +1,6 @@
 class SubDoer
 
-  Indentation = "\t\t|"
+  Indentation = "            |"
   Me = 'robinrob'
 
 
