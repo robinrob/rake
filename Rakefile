@@ -97,7 +97,7 @@ end
 
 
 task :push do
-  git("push origin " + branch())
+  git("push -u origin " + branch())
 end
 
 
