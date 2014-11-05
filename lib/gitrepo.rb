@@ -27,18 +27,24 @@ class GitRepo
 
   private
   def fill_submodules
-    if File.exists? '.gitmodules'
-      blocks = GitConfigReader.new.read '.gitmodules'
-      blocks.each do |block|
-        parent = Dir.pwd
-        Dir.chdir block.attrs[:path]
-        add_sub GitRepo.new({
-                                :name => block.name,
-                                :path => block.attrs[:path],
-                                :owner => block.derived_attrs[:owner]
-                            })
-        Dir.chdir parent
+    begin
+      if File.exists? '.gitmodules'
+        blocks = GitConfigReader.new.read '.gitmodules'
+        blocks.each do |block|
+          parent = Dir.pwd
+          Dir.chdir block.attrs[:path]
+          add_sub GitRepo.new({
+                                  :name => block.name,
+                                  :path => block.attrs[:path],
+                                  :owner => block.derived_attrs[:owner]
+                              })
+          Dir.chdir parent
+        end
       end
+    rescue Exception => e
+      puts "Error parsing submodules for repo: #{`pwd`}"
+      puts e.message
+      puts e.backtrace
     end
   end
 
