@@ -17,12 +17,6 @@ if File.exists?("config/application.rb")
 end
 
 
-if File.exists?("../base.rb")
-  require File.expand_path('../base.rb', __FILE__)
-  Rails.base.load_tasks
-end
-
-
 task :install do
    system("bundle install")
 end
