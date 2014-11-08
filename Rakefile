@@ -17,6 +17,7 @@ if File.exists?("config/application.rb")
 end
 
 Dir.glob('*.rake').each { |r| load r}
+Dir.glob('rake/*.rake').each { |r| load r}
 
 
 
