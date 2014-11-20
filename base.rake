@@ -106,3 +106,9 @@ end
 def git(command)
   system("git " + command)
 end
+
+
+def branch()
+  `git branch`[2..-2]
+end
+

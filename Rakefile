@@ -55,11 +55,6 @@ task :each_sub, [:command, :quiet, :recurse_down] do |t, args|
 end
 
 
-def branch()
-  `git branch`[2..-2]
-end
-
-
 # Ruby on Rails development
 task :server do
   Rake::Task["kill"].execute()
