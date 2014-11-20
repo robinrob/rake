@@ -109,7 +109,8 @@ end
 
 
 def branch()
-	output = `git branch | grep '*'`
-	output[3,-1]
+	`git branch | grep '*'`[2...-1]
 end
+
+
 
