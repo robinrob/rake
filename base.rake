@@ -109,6 +109,7 @@ end
 
 
 def branch()
-  `git branch`[2..-2]
+	output = `git branch | head -1`
+	output[3,-1]
 end
 
