@@ -109,7 +109,7 @@ end
 
 
 def branch()
-	output = `git branch | head -1`
+	output = `git branch | grep '*'`
 	output[3,-1]
 end
 
