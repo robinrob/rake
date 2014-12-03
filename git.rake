@@ -1,3 +1,6 @@
+$LOAD_PATH << '.'
+$LOAD_PATH << 'lib'
+
 require 'colorize'
 require 'gitrepo'
 require 'gitconfigfile'
