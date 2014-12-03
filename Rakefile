@@ -83,15 +83,18 @@ namespace :rails do
   end
 
 
-  desc 'Precompile rails assets.'
+  desc 'Precompile Rails assets.'
   task :precompile do
     system("RAILS_ENV=production bundle exec rake assets:precompile")
   end
 
 
-  desc 'Deploy the rails project to Heroku, pre-compiling assets first.'
-  task :deploy => ['rails:precompile', :install, :save] do
-    system("git push heroku master")
+  desc 'Deploy the Rails project to Heroku, pre-compiling assets first.'
+  task :deploy, [:environment] => ['rails:precompile', :install, :save] do |t, args|
+    environment = args[:environment] || 'production'
+    puts "Deploying to: ".green << "#{environment}".yellow
+
+    system("git push #{environment} master")
     system("heroku run rake db:migrate")
   end
 end
