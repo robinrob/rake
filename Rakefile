@@ -1,8 +1,3 @@
-$LOAD_PATH << '.'
-$LOAD_PATH << 'lib'
-$LOAD_PATH << 'rake'
-$LOAD_PATH << 'rake/lib'
-
 require 'colorize'
 
 
