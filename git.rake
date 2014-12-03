@@ -1,5 +1,6 @@
 $LOAD_PATH << '.'
 $LOAD_PATH << 'lib'
+$LOAD_PATH << 'rakelib/lib'
 
 require 'colorize'
 require 'gitrepo'
