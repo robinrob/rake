@@ -1,5 +1,9 @@
-require 'colorize'
+$LOAD_PATH << '.'
+$LOAD_PATH << 'lib'
+$LOAD_PATH << 'rake'
+$LOAD_PATH << 'rake/lib'
 
+require 'colorize'
 
 task :hashes do
   desc 'Replace all new-syntax hashes in the project with hash-rocket syntax.'
