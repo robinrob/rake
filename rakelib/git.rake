@@ -5,16 +5,8 @@ require 'gitconfigfile'
 
 namespace :git do
   desc 'Commit changes to git.'
-	task :commit, [:msg] do |t, args|
-	  Rake::Task["clean"].execute()
-	  Rake::Task["add"].execute()
-	  Rake::Task["status"].execute()
-
-	  unless args[:msg].nil?
-	    msg = args[:msg]
-	  else
-	    msg = "Auto-update."
-	  end
+	task :commit, [:msg] => [:clean, :add, :status] do |t, args|
+    msg = args[:msg] || "Auto-update."
 
 	  git("commit -m '#{msg}'")
 	end

@@ -32,8 +32,5 @@ end
 
 
 desc 'Stage, commit, pull & push.'
-task :save, [:msg] do |t, args|
-  Rake::Task["commit"].execute()
-  Rake::Task["pull"].execute()
-  Rake::Task["push"].execute()
+task :save, [:msg] => ['git:commit', 'git:pull', 'git:push'] do |t, args|
 end
